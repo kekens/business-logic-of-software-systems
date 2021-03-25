@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  postgres:
+    container_name: postgres
+    restart: on-failure
+    build: ./postgres/
+    ports:
+      - 5432:5432
+    volumes:
+      - postgresql:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=pass
+    command: postgres -c 'shared_preload_libraries='pg_stat_statements'' -c 'pg_stat_statements.max=10000' -c 'pg_stat_statements.track=all'
+volumes:
+  postgresql:
