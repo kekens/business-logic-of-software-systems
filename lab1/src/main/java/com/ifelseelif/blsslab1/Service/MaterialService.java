@@ -22,7 +22,7 @@ public class MaterialService implements IMaterialService {
     @Override
     public void createMaterial(Material material) {
         logger.info("create material");
-        DbMaterial dbMaterial = new DbMaterial();
+        DbMaterial dbMaterial = new DbMaterial("1");
         materialRepository.save(dbMaterial);
     }
 
