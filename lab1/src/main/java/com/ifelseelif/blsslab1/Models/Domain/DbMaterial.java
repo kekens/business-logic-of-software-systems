@@ -1,42 +1,29 @@
 package com.ifelseelif.blsslab1.Models.Domain;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.ifelseelif.blsslab1.Models.DTO.Status;
+import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
+import lombok.Data;
+
+import javax.persistence.*;
 
 
 @Entity
+@Data
 public class DbMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    private String firstName;
+    private long id;
 
-    protected DbMaterial() { }
+    private TypeMaterial typeMaterial;
+    private Status status;
 
-    public DbMaterial(String firstName) {
-        this.firstName = firstName;
-    }
+    @OneToOne
+    private DbBlog blog;
 
-    @Override
-    public String toString() {
-        return "DbMaterial{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                '}';
-    }
+    @OneToOne
+    private DbReview review;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+    @OneToOne
+    private DbStory story;
 }
