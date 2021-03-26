@@ -16,9 +16,6 @@ public class ReportService implements IReportService {
 
     @Override
     public void send(Report report) {
-        switch (report.getTypeMaterial()){
-            case Blog:
 
-        }
     }
 }

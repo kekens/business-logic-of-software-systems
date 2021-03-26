@@ -1,6 +1,8 @@
 package com.ifelseelif.blsslab1.Controllers;
 
-import com.ifelseelif.blsslab1.Models.DTO.Material;
+import com.ifelseelif.blsslab1.Models.DTO.Blog;
+import com.ifelseelif.blsslab1.Models.DTO.Review;
+import com.ifelseelif.blsslab1.Models.DTO.Story;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,19 +15,39 @@ public class MaterialController {
         this.materialService = materialService;
     }
 
-    @PostMapping("/create")
-    public void createMaterial(Material material) {
-        materialService.createMaterial(material);
+    @PostMapping("/create/blog")
+    public void createMaterial(Blog blog) {
+        materialService.createBlog(blog);
     }
 
-    @PostMapping("/publish/{id}")
-    public void publishMaterial(@PathVariable int id) {
-        materialService.publishMaterial(id);
+    @PostMapping("/create/review")
+    public void createMaterial(Review review) {
+        materialService.createReview(review);
     }
 
-    @PutMapping("/{id}")
-    public void updateMaterial(Material material, @PathVariable int id) {
-        materialService.updateMaterial(id, material);
+    @PostMapping("/create/story")
+    public void createMaterial(Story story) {
+        materialService.createStory(story);
+    }
+
+    @PutMapping("/update/blog/{id}")
+    public void updateMaterial(Blog blog, @PathVariable int id) {
+        materialService.updateBlog(id, blog);
+    }
+
+    @PutMapping("/update/review/{id}")
+    public void updateMaterial(Review review, @PathVariable int id) {
+        materialService.updateReview(id, review);
+    }
+
+    @PutMapping("/update/story/{id}")
+    public void updateMaterial(Story story, @PathVariable int id) {
+        materialService.updateStory(id, story);
+    }
+
+    @PostMapping("/send/{id}")
+    public void send(@PathVariable int id) {
+        materialService.sendMaterial(id);
     }
 
     @DeleteMapping("/{id}")
