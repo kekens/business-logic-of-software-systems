@@ -8,7 +8,9 @@ public interface IMaterialService {
 
     void deleteMaterial(int id);
 
-    void updateMaterial(int id, Material material);
+//    void updateMaterial(int id, Material material);
+
+    void createMaterial(TypeMaterial typeMaterial);
 
     void createBlog(Blog blog);
 

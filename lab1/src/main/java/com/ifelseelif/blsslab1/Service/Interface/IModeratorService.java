@@ -1,9 +1,12 @@
 package com.ifelseelif.blsslab1.Service.Interface;
 
-import com.ifelseelif.blsslab1.Models.DTO.ReportResponse;
+import com.ifelseelif.blsslab1.Models.DTO.Hotel;
+import com.ifelseelif.blsslab1.Models.Domain.DbReport;
 
 import java.util.List;
 
 public interface IModeratorService {
-    List<ReportResponse> getAllReports();
+    List<DbReport> getAllReports();
+    void addCountry(String name);
+    void addHotel(Hotel hotel);
 }

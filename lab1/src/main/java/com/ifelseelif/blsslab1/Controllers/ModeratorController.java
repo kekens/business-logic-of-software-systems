@@ -1,10 +1,10 @@
 package com.ifelseelif.blsslab1.Controllers;
 
-import com.ifelseelif.blsslab1.Models.DTO.ReportResponse;
+import com.ifelseelif.blsslab1.Models.DTO.Hotel;
+import com.ifelseelif.blsslab1.Models.Domain.DbReport;
 import com.ifelseelif.blsslab1.Service.Interface.IModeratorService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ifelseelif.blsslab1.Service.ModeratorService;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,12 +14,24 @@ public class ModeratorController {
 
     private final IModeratorService moderatorService;
 
-    public ModeratorController(IModeratorService moderatorService) {
+    public ModeratorController(ModeratorService moderatorService) {
         this.moderatorService = moderatorService;
     }
 
     @GetMapping("/reports/all")
-    public List<ReportResponse> getAllReports() {
+    public List<DbReport> getAllReports() {
         return moderatorService.getAllReports();
     }
+
+    @PostMapping("/add/country")
+    public void addCountry(String name) {
+        this.moderatorService.addCountry(name);
+    }
+
+    @PostMapping("/add/hotel")
+    public void addHotel(@RequestBody Hotel hotel) {
+        this.moderatorService.addHotel(hotel);
+    }
+
+
 }

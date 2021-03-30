@@ -4,29 +4,30 @@ import com.ifelseelif.blsslab1.Models.DTO.Blog;
 import com.ifelseelif.blsslab1.Models.DTO.Review;
 import com.ifelseelif.blsslab1.Models.DTO.Story;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
+import com.ifelseelif.blsslab1.Service.MaterialService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/materials")
 public class MaterialController {
-    private IMaterialService materialService;
+    private final IMaterialService materialService;
 
-    public MaterialController(IMaterialService materialService) {
+    public MaterialController(MaterialService materialService) {
         this.materialService = materialService;
     }
 
     @PostMapping("/create/blog")
-    public void createMaterial(Blog blog) {
+    public void createMaterial(@RequestBody Blog blog) {
         materialService.createBlog(blog);
     }
 
     @PostMapping("/create/review")
-    public void createMaterial(Review review) {
+    public void createMaterial(@RequestBody Review review) {
         materialService.createReview(review);
     }
 
     @PostMapping("/create/story")
-    public void createMaterial(Story story) {
+    public void createMaterial(@RequestBody Story story) {
         materialService.createStory(story);
     }
 
