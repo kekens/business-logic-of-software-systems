@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class MaterialController {
     private final IMaterialService materialService;
 
-    public MaterialController(MaterialService materialService) {
+    public MaterialController(IMaterialService materialService) {
         this.materialService = materialService;
     }
 

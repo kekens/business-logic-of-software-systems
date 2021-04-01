@@ -14,7 +14,7 @@ public class ModeratorController {
 
     private final IModeratorService moderatorService;
 
-    public ModeratorController(ModeratorService moderatorService) {
+    public ModeratorController(IModeratorService moderatorService) {
         this.moderatorService = moderatorService;
     }
 
