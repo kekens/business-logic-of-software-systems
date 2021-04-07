@@ -34,6 +34,11 @@ public class ModeratorService implements IModeratorService {
     }
 
     @Override
+    public DbReport getReport(long id) {
+        return reportRepository.findDbReportById(id);
+    }
+
+    @Override
     public void addCountry(String name) {
         DbCountry dbCountry = new DbCountry();
         dbCountry.setName(name);

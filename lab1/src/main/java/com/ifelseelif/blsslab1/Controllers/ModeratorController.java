@@ -23,6 +23,11 @@ public class ModeratorController {
         return moderatorService.getAllReports();
     }
 
+    @GetMapping("/reports/{id}")
+    public DbReport getReport(@PathVariable int id) {
+        return moderatorService.getReport(id);
+    }
+
     @PostMapping("/add/country")
     public void addCountry(String name) {
         this.moderatorService.addCountry(name);

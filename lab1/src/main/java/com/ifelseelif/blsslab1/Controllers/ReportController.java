@@ -21,4 +21,5 @@ public class ReportController {
     public void createMaterial(@RequestBody Report report) {
         reportService.send(report);
     }
+
 }

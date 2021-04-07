@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IModeratorService {
     List<DbReport> getAllReports();
+    DbReport getReport(long id);
     void addCountry(String name);
     void addHotel(Hotel hotel);
 }

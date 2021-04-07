@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,6 +33,16 @@ public class MaterialService implements IMaterialService {
         this.blogRepository = blogRepository;
         this.reviewRepository = reviewRepository;
         this.countryRepository = countryRepository;
+    }
+
+    @Override
+    public List<DbMaterial> getAllMaterials() {
+        return (List<DbMaterial>) materialRepository.findAll();
+    }
+
+    @Override
+    public DbMaterial getMaterial(long id) {
+        return materialRepository.getDbMaterialById(id);
     }
 
     @Override

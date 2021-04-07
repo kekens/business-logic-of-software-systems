@@ -3,9 +3,12 @@ package com.ifelseelif.blsslab1.Controllers;
 import com.ifelseelif.blsslab1.Models.DTO.Blog;
 import com.ifelseelif.blsslab1.Models.DTO.Review;
 import com.ifelseelif.blsslab1.Models.DTO.Story;
+import com.ifelseelif.blsslab1.Models.Domain.DbMaterial;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
 import com.ifelseelif.blsslab1.Service.MaterialService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/materials")
@@ -14,6 +17,16 @@ public class MaterialController {
 
     public MaterialController(IMaterialService materialService) {
         this.materialService = materialService;
+    }
+
+    @GetMapping("/all")
+    public List<DbMaterial> getAllMaterials() {
+        return materialService.getAllMaterials();
+    }
+
+    @GetMapping("/{id}")
+    public DbMaterial getMaterial(@PathVariable long id) {
+        return materialService.getMaterial(id);
     }
 
     @PostMapping("/create/blog")
