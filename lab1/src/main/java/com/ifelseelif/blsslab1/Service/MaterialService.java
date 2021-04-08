@@ -55,7 +55,7 @@ public class MaterialService implements IMaterialService {
 
     @Override
     public void deleteMaterial(long id) {
-        throw new NotImplementedException();
+        materialRepository.deleteById(id);
     }
 
     @Override
@@ -85,7 +85,6 @@ public class MaterialService implements IMaterialService {
         dbBlog.setBriefInformation(blog.getBriefInformation());
         dbBlog.setMainText(blog.getMainText());
         dbBlog.setCountry(new DbCountry(blog.getCountryId()));
-        dbBlog.setChecked(false);
 
         blogRepository.save(dbBlog);
 
