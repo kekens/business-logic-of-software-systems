@@ -142,7 +142,7 @@ public class MaterialService implements IMaterialService {
                 ));
 
         dbBlog.setHeader(blog.getHeader());
-        dbBlog.setChecked(blog.isChecked());
+        dbBlog.setChecked(false);
         dbBlog.setPublishDate(blog.getPublishDate());
         dbBlog.setMainText(blog.getMainText());
         dbBlog.setCountry(country);
@@ -188,7 +188,7 @@ public class MaterialService implements IMaterialService {
         HashSet<DbCountry> countries = new HashSet<>();
         dbCountries.iterator().forEachRemaining(countries::add);
 
-        if (countries.size() != story.getCountries().size()) {
+        if(countries.size() != story.getCountries().size()){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ("Some country not found")
             );
@@ -229,6 +229,6 @@ public class MaterialService implements IMaterialService {
 
     @Override
     public List<DbMaterial> getAllBestMaterials() {
-        return materialRepository.getAllMaterials();
+        return null;
     }
 }

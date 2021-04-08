@@ -25,4 +25,5 @@ public class DbBlog {
     private Date publishDate;
     @ManyToOne
     private DbCountry country;
+    private boolean isChecked;
 }
