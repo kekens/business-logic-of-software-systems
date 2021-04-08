@@ -51,17 +51,17 @@ public class MaterialController {
     }
 
     @PutMapping("/update/blog/{id}")
-    public void updateMaterial(Blog blog, @PathVariable int id) {
+    public void updateMaterial(@RequestBody Blog blog, @PathVariable int id) {
         materialService.updateBlog(id, blog);
     }
 
     @PutMapping("/update/review/{id}")
-    public void updateMaterial(Review review, @PathVariable int id) {
+    public void updateMaterial(@RequestBody Review review, @PathVariable int id) {
         materialService.updateReview(id, review);
     }
 
     @PutMapping("/update/story/{id}")
-    public void updateMaterial(Story story, @PathVariable int id) {
+    public void updateMaterial(@RequestBody Story story, @PathVariable int id) {
         materialService.updateStory(id, story);
     }
 

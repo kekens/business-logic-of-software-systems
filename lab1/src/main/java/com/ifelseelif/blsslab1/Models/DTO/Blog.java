@@ -3,8 +3,6 @@ package com.ifelseelif.blsslab1.Models.DTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
 @Data

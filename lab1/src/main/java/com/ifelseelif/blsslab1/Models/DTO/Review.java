@@ -1,5 +1,6 @@
 package com.ifelseelif.blsslab1.Models.DTO;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ public class Review {
     private int scoreOfFood;
     @JsonProperty
     private boolean isGoodHotel;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date visitedDate;
     private String advantages;
     private String disadvantages;
