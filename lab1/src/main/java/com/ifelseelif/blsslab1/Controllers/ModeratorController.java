@@ -40,5 +40,4 @@ public class ModeratorController {
         this.moderatorService.addHotel(hotel);
     }
 
-
 }

@@ -4,11 +4,16 @@ import com.ifelseelif.blsslab1.Database.*;
 import com.ifelseelif.blsslab1.Models.DTO.*;
 import com.ifelseelif.blsslab1.Models.Domain.*;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
+import javassist.NotFoundException;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,11 +60,6 @@ public class MaterialService implements IMaterialService {
         throw new NotImplementedException();
     }
 
-//    @Override
-//    public void updateMaterial(int id, Material material) {
-//        throw new NotImplementedException();
-//    }
-
     @Override
     public void createMaterial(TypeMaterial typeMaterial) {
         DbMaterial dbMaterial = new DbMaterial();
@@ -86,7 +86,6 @@ public class MaterialService implements IMaterialService {
         dbBlog.setHeader(blog.getHeader());
         dbBlog.setBriefInformation(blog.getBriefInformation());
         dbBlog.setMainText(blog.getMainText());
-        dbBlog.setPublishDate(blog.getPublishDate());
         dbBlog.setCountry(new DbCountry(blog.getCountryId()));
         dbBlog.setChecked(false);
 
@@ -123,7 +122,7 @@ public class MaterialService implements IMaterialService {
         dbStory.setMainText(story.getMainText());
 
         Set<DbCountry> countrySet = new HashSet<>();
-        for (long countryId: story.getCountries()) {
+        for (long countryId : story.getCountries()) {
             countrySet.add(new DbCountry(countryId));
         }
 
@@ -136,7 +135,25 @@ public class MaterialService implements IMaterialService {
     @Override
     public void updateBlog(long id, Blog blog) {
 
+        DbBlog dbBlog = blogRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, ("Blog with id=" + id + " not found")
+        ));
+
+        DbCountry country = countryRepository.findById(blog.getCountryId()).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, ("Country with id=" + id + " not found")
+                ));
+
+        dbBlog.setBriefInformation(blog.getBriefInformation());
+        dbBlog.setHeader(blog.getHeader());
+        dbBlog.setChecked(blog.isChecked());
+        dbBlog.setPublishDate(blog.getPublishDate());
+        dbBlog.setMainText(blog.getMainText());
+        dbBlog.setCountry(country);
+
+        blogRepository.save(dbBlog);
     }
+
 
     @Override
     public void updateReview(long id, Review review) {

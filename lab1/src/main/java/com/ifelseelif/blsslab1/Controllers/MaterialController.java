@@ -5,7 +5,6 @@ import com.ifelseelif.blsslab1.Models.DTO.Review;
 import com.ifelseelif.blsslab1.Models.DTO.Story;
 import com.ifelseelif.blsslab1.Models.Domain.DbMaterial;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
-import com.ifelseelif.blsslab1.Service.MaterialService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class MaterialController {
     }
 
     @PutMapping("/update/blog/{id}")
-    public void updateMaterial(Blog blog, @PathVariable int id) {
+    public void updateMaterial(Blog blog, @PathVariable int id)  {
         materialService.updateBlog(id, blog);
     }
 

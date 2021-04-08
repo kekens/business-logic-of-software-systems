@@ -2,6 +2,7 @@ package com.ifelseelif.blsslab1.Service.Interface;
 
 import com.ifelseelif.blsslab1.Models.DTO.*;
 import com.ifelseelif.blsslab1.Models.Domain.DbMaterial;
+import javassist.NotFoundException;
 
 import java.util.List;
 
