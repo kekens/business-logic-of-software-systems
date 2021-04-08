@@ -79,6 +79,7 @@ public class MaterialService implements IMaterialService {
         dbBlog.setBriefInformation(blog.getBriefInformation());
         dbBlog.setMainText(blog.getMainText());
         dbBlog.setCountry(new DbCountry(blog.getCountryId()));
+        dbBlog.setPublishDate(blog.getPublishDate());
 
         blogRepository.save(dbBlog);
 
@@ -134,9 +135,7 @@ public class MaterialService implements IMaterialService {
                 new ResponseStatusException(
                         HttpStatus.NOT_FOUND, ("Country with id=" + id + " not found")
                 ));
-
         dbBlog.setHeader(blog.getHeader());
-        dbBlog.setChecked(false);
         dbBlog.setPublishDate(blog.getPublishDate());
         dbBlog.setMainText(blog.getMainText());
         dbBlog.setCountry(country);
