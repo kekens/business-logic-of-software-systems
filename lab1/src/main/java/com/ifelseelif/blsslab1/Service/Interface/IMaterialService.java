@@ -8,9 +8,8 @@ import java.util.List;
 
 public interface IMaterialService {
 
-    void publishMaterial(int id, TypeMaterial typeMaterial);
-
     List<DbMaterial> getAllMaterials();
+
     DbMaterial getMaterial(long id);
 
     void deleteMaterial(long id);

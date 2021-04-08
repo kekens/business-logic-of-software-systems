@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,11 +45,6 @@ public class MaterialService implements IMaterialService {
     @Override
     public DbMaterial getMaterial(long id) {
         return materialRepository.getDbMaterialById(id);
-    }
-
-    @Override
-    public void publishMaterial(int id, TypeMaterial typeMaterial) {
-        throw new NotImplementedException();
     }
 
     @Override
@@ -188,7 +182,7 @@ public class MaterialService implements IMaterialService {
         HashSet<DbCountry> countries = new HashSet<>();
         dbCountries.iterator().forEachRemaining(countries::add);
 
-        if(countries.size() != story.getCountries().size()){
+        if (countries.size() != story.getCountries().size()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ("Some country not found")
             );
