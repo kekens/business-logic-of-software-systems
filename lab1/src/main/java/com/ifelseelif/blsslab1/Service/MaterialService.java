@@ -4,8 +4,6 @@ import com.ifelseelif.blsslab1.Database.*;
 import com.ifelseelif.blsslab1.Models.DTO.*;
 import com.ifelseelif.blsslab1.Models.Domain.*;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
-import javassist.NotFoundException;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,21 +22,21 @@ public class MaterialService implements IMaterialService {
     private Logger logger = LoggerFactory.getLogger(MaterialService.class);
 
     private final MaterialRepository materialRepository;
-
     private final StoryRepository storyRepository;
     private final BlogRepository blogRepository;
     private final ReviewRepository reviewRepository;
-
     private final CountryRepository countryRepository;
+    private final HotelRepository hotelRepository;
 
     public MaterialService(MaterialRepository materialRepository, StoryRepository storyRepository,
                            BlogRepository blogRepository, ReviewRepository reviewRepository,
-                           CountryRepository countryRepository) {
+                           CountryRepository countryRepository, HotelRepository hotelRepository) {
         this.materialRepository = materialRepository;
         this.storyRepository = storyRepository;
         this.blogRepository = blogRepository;
         this.reviewRepository = reviewRepository;
         this.countryRepository = countryRepository;
+        this.hotelRepository = hotelRepository;
     }
 
     @Override
@@ -136,7 +134,6 @@ public class MaterialService implements IMaterialService {
 
     @Override
     public void updateBlog(long id, Blog blog) {
-
         DbBlog dbBlog = blogRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, ("Blog with id=" + id + " not found")
         ));
@@ -146,7 +143,6 @@ public class MaterialService implements IMaterialService {
                         HttpStatus.NOT_FOUND, ("Country with id=" + id + " not found")
                 ));
 
-        dbBlog.setBriefInformation(blog.getBriefInformation());
         dbBlog.setHeader(blog.getHeader());
         dbBlog.setChecked(blog.isChecked());
         dbBlog.setPublishDate(blog.getPublishDate());
@@ -156,15 +152,57 @@ public class MaterialService implements IMaterialService {
         blogRepository.save(dbBlog);
     }
 
-
     @Override
     public void updateReview(long id, Review review) {
+        DbReview dbReview = reviewRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, ("Review with id=" + id + " not found")
+        ));
 
+        DbHotel hotel = hotelRepository.findById(review.getHotelId()).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, ("Hotel with id=" + id + " not found")
+                ));
+
+        dbReview.setAdvantages(review.getAdvantages());
+        dbReview.setDisadvantages(review.getDisadvantages());
+
+        dbReview.setVisitedDate(review.getVisitedDate());
+        dbReview.setGoodHotel(review.getIsGoodHotel());
+        dbReview.setMainText(review.getMainText());
+        dbReview.setHotel(hotel);
+
+        dbReview.setScoreOfService(review.getScoreOfService());
+        dbReview.setScoreOfFood(review.getScoreOfFood());
+        dbReview.setScoreOfStuff(review.getScoreOfStuff());
+        dbReview.setScoreOfLocation(review.getScoreOfLocation());
+
+        reviewRepository.save(dbReview);
     }
 
     @Override
     public void updateStory(long id, Story story) {
+        DbStory dbStory = storyRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, ("Story with id=" + id + " not found")
+        ));
 
+        Iterable<DbCountry> dbCountries = countryRepository.findAllById(story.getCountries());
+
+        HashSet<DbCountry> countries = new HashSet<>();
+        dbCountries.iterator().forEachRemaining(countries::add);
+
+        if(countries.size() != story.getCountries().size()){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, ("Some country not found")
+            );
+        }
+
+        dbStory.setBriefInformation(story.getBriefInformation());
+        dbStory.setMainText(story.getMainText());
+        dbStory.setTravelDate(story.getTravelDate());
+        dbStory.setHeader(story.getHeader());
+        dbStory.setCountry(countries);
+
+        storyRepository.save(dbStory);
     }
 
     @Override
