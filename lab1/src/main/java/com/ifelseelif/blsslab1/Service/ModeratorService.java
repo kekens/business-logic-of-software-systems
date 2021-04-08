@@ -1,17 +1,19 @@
 package com.ifelseelif.blsslab1.Service;
 
-import com.ifelseelif.blsslab1.Database.CountryRepository;
-import com.ifelseelif.blsslab1.Database.HotelRepository;
-import com.ifelseelif.blsslab1.Database.ReportRepository;
+import com.ifelseelif.blsslab1.Database.*;
 import com.ifelseelif.blsslab1.Models.DTO.Hotel;
-import com.ifelseelif.blsslab1.Models.Domain.DbCountry;
-import com.ifelseelif.blsslab1.Models.Domain.DbHotel;
-import com.ifelseelif.blsslab1.Models.Domain.DbReport;
+import com.ifelseelif.blsslab1.Models.DTO.Status;
+import com.ifelseelif.blsslab1.Models.DTO.StoryResponse;
+import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
+import com.ifelseelif.blsslab1.Models.Domain.*;
 import com.ifelseelif.blsslab1.Service.Interface.IModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ModeratorService implements IModeratorService {
@@ -19,13 +21,17 @@ public class ModeratorService implements IModeratorService {
     private final ReportRepository reportRepository;
     private final CountryRepository countryRepository;
     private final HotelRepository hotelRepository;
+    private final StoryRepository storyRepository;
+    private final MaterialRepository materialRepository;
 
     @Autowired
     public ModeratorService(ReportRepository reportRepository, CountryRepository countryRepository,
-                            HotelRepository hotelRepository) {
+                            HotelRepository hotelRepository, StoryRepository storyRepository, MaterialRepository materialRepository) {
         this.reportRepository = reportRepository;
         this.countryRepository = countryRepository;
         this.hotelRepository = hotelRepository;
+        this.storyRepository = storyRepository;
+        this.materialRepository = materialRepository;
     }
 
     @Override
@@ -53,5 +59,71 @@ public class ModeratorService implements IModeratorService {
         dbHotel.setRating(hotel.getRating());
 
         hotelRepository.save(dbHotel);
+    }
+
+    @Override
+    public List<StoryResponse> getUnverifiedStories() {
+        List<DbStory> dbStories = storyRepository.findAllUnverifiedStories();
+        List<StoryResponse> unverifiedStories = new ArrayList<>();
+
+        for (DbStory dbStory: dbStories) {
+            unverifiedStories.add(StoryResponse.builder()
+                    .id(dbStory.getId())
+                    .header(dbStory.getHeader())
+                    .travelDate(dbStory.getTravelDate())
+                    .briefInformation(dbStory.getBriefInformation())
+                    .mainText(dbStory.getMainText())
+                    .countries(dbStory.getCountry().stream().map(DbCountry::getName).collect(Collectors.toSet()))
+            .build());
+        }
+
+        return unverifiedStories;
+    }
+
+    @Override
+    public String setVerifiedStory(long id) {
+        Optional<DbStory> dbStory = storyRepository.findById(id);
+
+        if (dbStory.isPresent()) {
+
+            Optional<DbMaterial> dbMaterial = Optional.ofNullable(materialRepository.findDbMaterialByStory(dbStory.get()));
+
+            if (dbMaterial.isPresent()) {
+                if (!dbMaterial.get().getStatus().equals(Status.Published)) {
+                    return "Story isn't published";
+                }
+            }
+
+            if (dbStory.get().isVerified()) {
+                return "Story has already been verified";
+            }
+
+
+        } else {
+            return "Story not found";
+        }
+
+        storyRepository.setVerifiedStory(id);
+        return "OK";
+    }
+
+    @Override
+    public String publishMaterial(long id) {
+        Optional<DbMaterial> dbMaterial = materialRepository.findById(id);
+
+        if (dbMaterial.isPresent()) {
+            if (dbMaterial.get().getTypeMaterial().equals(TypeMaterial.Story)) {
+                return "Incorrect type of material";
+            }
+
+            if (!dbMaterial.get().getStatus().equals(Status.Approving)) {
+                return "Incorrect status of material";
+            }
+        } else {
+            return "Material not found";
+        }
+
+        materialRepository.changeStatus(id, Status.Published);
+        return "OK";
     }
 }

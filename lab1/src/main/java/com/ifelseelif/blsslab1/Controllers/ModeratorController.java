@@ -1,9 +1,11 @@
 package com.ifelseelif.blsslab1.Controllers;
 
 import com.ifelseelif.blsslab1.Models.DTO.Hotel;
+import com.ifelseelif.blsslab1.Models.DTO.StoryResponse;
 import com.ifelseelif.blsslab1.Models.Domain.DbReport;
 import com.ifelseelif.blsslab1.Service.Interface.IModeratorService;
-import com.ifelseelif.blsslab1.Service.ModeratorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,31 @@ public class ModeratorController {
     }
 
     @PostMapping("/material/publish")
+    public ResponseEntity<String> publishMaterial(long id) {
+        String response = moderatorService.publishMaterial(id);
+
+        if (response.equals("OK")) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/stories/all")
+    public List<StoryResponse> getUnverifiedStories() {
+        return moderatorService.getUnverifiedStories();
+    }
+
+    @PostMapping("/stories/verify")
+    public ResponseEntity<String> setVerifiedStory(long id) {
+        String response = moderatorService.setVerifiedStory(id);
+
+        if (response.equals("OK")) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 
     @GetMapping("/reports/all")
     public List<DbReport> getAllReports() {
@@ -32,12 +59,12 @@ public class ModeratorController {
 
     @PostMapping("/add/country")
     public void addCountry(String name) {
-        this.moderatorService.addCountry(name);
+        moderatorService.addCountry(name);
     }
 
     @PostMapping("/add/hotel")
     public void addHotel(@RequestBody Hotel hotel) {
-        this.moderatorService.addHotel(hotel);
+        moderatorService.addHotel(hotel);
     }
 
 

@@ -5,7 +5,8 @@ import com.ifelseelif.blsslab1.Models.DTO.Review;
 import com.ifelseelif.blsslab1.Models.DTO.Story;
 import com.ifelseelif.blsslab1.Models.Domain.DbMaterial;
 import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
-import com.ifelseelif.blsslab1.Service.MaterialService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,8 +61,14 @@ public class MaterialController {
     }
 
     @PostMapping("/send")
-    public void send(long id) {
-        materialService.sendMaterial(id);
+    public ResponseEntity<String> send(long id) {
+        String response = materialService.sendMaterial(id);
+
+        if (response.equals("OK")) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @DeleteMapping("/{id}")

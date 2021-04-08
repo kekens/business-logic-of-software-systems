@@ -20,6 +20,7 @@ public class DbMaterial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Enumerated(EnumType.STRING)
     private TypeMaterial typeMaterial;
     @Enumerated(EnumType.STRING)
     private Status status;
