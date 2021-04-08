@@ -25,6 +25,11 @@ public class MaterialController {
         return materialService.getAllMaterials();
     }
 
+    @GetMapping("/all/best")
+    public List<DbMaterial> getAllBestMaterials() {
+        return materialService.getAllBestMaterials();
+    }
+
     @GetMapping("/{id}")
     public DbMaterial getMaterial(@PathVariable long id) {
         return materialService.getMaterial(id);
@@ -46,7 +51,7 @@ public class MaterialController {
     }
 
     @PutMapping("/update/blog/{id}")
-    public void updateMaterial(Blog blog, @PathVariable int id)  {
+    public void updateMaterial(Blog blog, @PathVariable int id) {
         materialService.updateBlog(id, blog);
     }
 

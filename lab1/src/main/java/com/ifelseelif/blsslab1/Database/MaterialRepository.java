@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface MaterialRepository extends CrudRepository<DbMaterial, Long> {
     DbMaterial getDbMaterialById(long id);
@@ -20,6 +21,9 @@ public interface MaterialRepository extends CrudRepository<DbMaterial, Long> {
 
     @Query(value = "SELECT type_material FROM db_material WHERE id=:id", nativeQuery = true)
     TypeMaterial findTypeMaterialById(long id);
+
+    @Query(value = "SELECT * FROM db_material WHERE is_best=true", nativeQuery = true)
+    List<DbMaterial> getAllMaterials();
 
     DbMaterial findDbMaterialByStory(DbStory id);
 }

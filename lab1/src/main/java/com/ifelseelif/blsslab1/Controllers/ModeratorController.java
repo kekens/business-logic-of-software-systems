@@ -53,7 +53,7 @@ public class ModeratorController {
     }
 
     @GetMapping("/reports/{id}")
-    public DbReport getReport(@PathVariable int id) {
+    public DbReport getReport(@PathVariable long id) {
         return moderatorService.getReport(id);
     }
 
@@ -67,4 +67,8 @@ public class ModeratorController {
         moderatorService.addHotel(hotel);
     }
 
+    @PostMapping("/selectBest/{idOfMaterial}")
+    public void selectBestMaterial(@PathVariable long idOfMaterial) {
+        moderatorService.selectBestMaterial(idOfMaterial);
+    }
 }

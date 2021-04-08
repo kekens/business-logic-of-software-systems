@@ -8,7 +8,9 @@ import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
 import com.ifelseelif.blsslab1.Models.Domain.*;
 import com.ifelseelif.blsslab1.Service.Interface.IModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,5 +127,15 @@ public class ModeratorService implements IModeratorService {
 
         materialRepository.changeStatus(id, Status.Published);
         return "OK";
+    }
+
+    @Override
+    public void selectBestMaterial(long idOfMaterial) {
+        DbMaterial dbMaterial = materialRepository.findById(idOfMaterial).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, ("Material with id=" + idOfMaterial + " not found")
+        ));
+        dbMaterial.setBest(true);
+
+        materialRepository.save(dbMaterial);
     }
 }

@@ -33,4 +33,6 @@ public class DbMaterial {
 
     @OneToOne
     private DbStory story;
+
+    private boolean isBest;
 }

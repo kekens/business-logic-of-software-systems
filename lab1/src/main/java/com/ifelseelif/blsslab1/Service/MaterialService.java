@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -190,7 +189,7 @@ public class MaterialService implements IMaterialService {
         HashSet<DbCountry> countries = new HashSet<>();
         dbCountries.iterator().forEachRemaining(countries::add);
 
-        if(countries.size() != story.getCountries().size()){
+        if (countries.size() != story.getCountries().size()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ("Some country not found")
             );
@@ -227,5 +226,10 @@ public class MaterialService implements IMaterialService {
         }
 
         return "OK";
+    }
+
+    @Override
+    public List<DbMaterial> getAllBestMaterials() {
+        return materialRepository.getAllMaterials();
     }
 }

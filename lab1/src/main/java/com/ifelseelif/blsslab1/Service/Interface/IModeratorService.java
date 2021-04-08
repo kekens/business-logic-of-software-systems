@@ -1,7 +1,6 @@
 package com.ifelseelif.blsslab1.Service.Interface;
 
 import com.ifelseelif.blsslab1.Models.DTO.Hotel;
-import com.ifelseelif.blsslab1.Models.DTO.Story;
 import com.ifelseelif.blsslab1.Models.DTO.StoryResponse;
 import com.ifelseelif.blsslab1.Models.Domain.DbReport;
 
@@ -15,4 +14,5 @@ public interface IModeratorService {
     List<StoryResponse> getUnverifiedStories();
     String setVerifiedStory(long id);
     String publishMaterial(long id);
+    void selectBestMaterial(long idOfMaterial);
 }

@@ -15,8 +15,6 @@ public interface IMaterialService {
 
     void deleteMaterial(long id);
 
-//    void updateMaterial(int id, Material material);
-
     void createMaterial(TypeMaterial typeMaterial);
 
     void createBlog(Blog blog);
@@ -32,4 +30,6 @@ public interface IMaterialService {
     void updateStory(long id, Story story);
 
     String sendMaterial(long id);
+
+    List<DbMaterial> getAllBestMaterials();
 }
