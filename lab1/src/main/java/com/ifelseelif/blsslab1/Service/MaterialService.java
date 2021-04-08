@@ -51,7 +51,7 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public void deleteMaterial(int id) {
+    public void deleteMaterial(long id) {
         throw new NotImplementedException();
     }
 
@@ -134,22 +134,22 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public void updateBlog(int id, Blog blog) {
+    public void updateBlog(long id, Blog blog) {
 
     }
 
     @Override
-    public void updateReview(int id, Review review) {
+    public void updateReview(long id, Review review) {
 
     }
 
     @Override
-    public void updateStory(int id, Story story) {
+    public void updateStory(long id, Story story) {
 
     }
 
     @Override
-    public void sendMaterial(int id) {
-
+    public void sendMaterial(long id) {
+        materialRepository.sendOnApproving(id);
     }
 }

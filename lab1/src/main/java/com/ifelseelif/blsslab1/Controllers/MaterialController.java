@@ -59,8 +59,8 @@ public class MaterialController {
         materialService.updateStory(id, story);
     }
 
-    @PostMapping("/send/{id}")
-    public void send(@PathVariable int id) {
+    @PostMapping("/send")
+    public void send(long id) {
         materialService.sendMaterial(id);
     }
 

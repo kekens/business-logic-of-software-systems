@@ -12,7 +12,7 @@ public interface IMaterialService {
     List<DbMaterial> getAllMaterials();
     DbMaterial getMaterial(long id);
 
-    void deleteMaterial(int id);
+    void deleteMaterial(long id);
 
 //    void updateMaterial(int id, Material material);
 
@@ -24,11 +24,11 @@ public interface IMaterialService {
 
     void createStory(Story story);
 
-    void updateBlog(int id, Blog blog);
+    void updateBlog(long id, Blog blog);
 
-    void updateReview(int id, Review review);
+    void updateReview(long id, Review review);
 
-    void updateStory(int id, Story story);
+    void updateStory(long id, Story story);
 
-    void sendMaterial(int id);
+    void sendMaterial(long id);
 }

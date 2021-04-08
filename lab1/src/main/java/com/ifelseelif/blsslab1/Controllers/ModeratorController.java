@@ -18,6 +18,8 @@ public class ModeratorController {
         this.moderatorService = moderatorService;
     }
 
+    @PostMapping("/material/publish")
+
     @GetMapping("/reports/all")
     public List<DbReport> getAllReports() {
         return moderatorService.getAllReports();

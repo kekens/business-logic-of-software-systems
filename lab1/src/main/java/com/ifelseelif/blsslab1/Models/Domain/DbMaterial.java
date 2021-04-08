@@ -21,6 +21,7 @@ public class DbMaterial {
     private long id;
 
     private TypeMaterial typeMaterial;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @OneToOne
