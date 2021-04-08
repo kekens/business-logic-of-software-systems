@@ -5,6 +5,7 @@ import com.ifelseelif.blsslab1.Models.DTO.Status;
 import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
@@ -25,12 +26,12 @@ public class DbMaterial {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private DbBlog blog;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private DbReview review;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     private DbStory story;
 }

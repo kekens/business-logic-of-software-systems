@@ -1,6 +1,5 @@
 package com.ifelseelif.blsslab1.Models.Domain;
 
-import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
 import lombok.Data;
 
 import javax.persistence.*;
