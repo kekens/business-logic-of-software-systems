@@ -31,5 +31,5 @@ public interface IMaterialService {
 
     void updateStory(long id, Story story);
 
-    void sendMaterial(long id);
+    String sendMaterial(long id);
 }

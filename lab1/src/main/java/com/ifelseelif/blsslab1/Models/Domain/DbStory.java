@@ -27,4 +27,6 @@ public class DbStory {
 
     @ManyToMany
     private Set<DbCountry> country;
+
+    private boolean isVerified;
 }

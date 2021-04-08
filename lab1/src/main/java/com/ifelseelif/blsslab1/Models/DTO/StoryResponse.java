@@ -1,15 +1,18 @@
 package com.ifelseelif.blsslab1.Models.DTO;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.sql.Date;
 import java.util.Set;
 
 @Data
-public class Story {
+@Builder
+public class StoryResponse {
+    private long id;
     private String header;
     private Date travelDate;
     private String briefInformation;
     private String mainText;
-    private Set<Long> countries;
+    private Set<String> countries;
 }

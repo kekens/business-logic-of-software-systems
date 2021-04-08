@@ -16,6 +16,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -120,6 +121,7 @@ public class MaterialService implements IMaterialService {
         dbStory.setTravelDate(story.getTravelDate());
         dbStory.setBriefInformation(story.getBriefInformation());
         dbStory.setMainText(story.getMainText());
+        dbStory.setVerified(false);
 
         Set<DbCountry> countrySet = new HashSet<>();
         for (long countryId : story.getCountries()) {
@@ -166,7 +168,26 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public void sendMaterial(long id) {
-        materialRepository.sendOnApproving(id);
+    public String sendMaterial(long id) {
+
+        Optional<DbMaterial> dbMaterial = materialRepository.findById(id);
+
+        if (dbMaterial.isPresent()) {
+            if (!dbMaterial.get().getStatus().equals(Status.Draft)) {
+                return "Incorrect status of material";
+            }
+        } else {
+            return "Material not found";
+        }
+
+        TypeMaterial typeMaterial = materialRepository.findTypeMaterialById(id);
+
+        if (typeMaterial.equals(TypeMaterial.Story)) {
+            materialRepository.changeStatus(id, Status.Published);
+        } else {
+            materialRepository.changeStatus(id, Status.Approving);
+        }
+
+        return "OK";
     }
 }
