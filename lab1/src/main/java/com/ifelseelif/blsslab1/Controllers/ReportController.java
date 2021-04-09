@@ -25,15 +25,5 @@ public class ReportController {
         reportService.send(report);
     }
 
-    @PostMapping("/close")
-    public ResponseEntity<String> closeReport(@RequestBody ReviewedReport reviewedReport) {
-        String response = reportService.closeReport(reviewedReport);
-
-        if (response.equals("OK")) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-    }
 
 }

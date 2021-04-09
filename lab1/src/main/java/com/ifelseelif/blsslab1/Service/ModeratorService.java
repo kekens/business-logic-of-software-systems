@@ -1,10 +1,7 @@
 package com.ifelseelif.blsslab1.Service;
 
 import com.ifelseelif.blsslab1.Database.*;
-import com.ifelseelif.blsslab1.Models.DTO.Hotel;
-import com.ifelseelif.blsslab1.Models.DTO.Status;
-import com.ifelseelif.blsslab1.Models.DTO.StoryResponse;
-import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
+import com.ifelseelif.blsslab1.Models.DTO.*;
 import com.ifelseelif.blsslab1.Models.Domain.*;
 import com.ifelseelif.blsslab1.Service.Interface.IModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +22,19 @@ public class ModeratorService implements IModeratorService {
     private final HotelRepository hotelRepository;
     private final StoryRepository storyRepository;
     private final MaterialRepository materialRepository;
+    private final MaterialRequestRepository materialRequestRepository;
+    private final MaterialService materialService;
 
     @Autowired
     public ModeratorService(ReportRepository reportRepository, CountryRepository countryRepository,
-                            HotelRepository hotelRepository, StoryRepository storyRepository, MaterialRepository materialRepository) {
+                            HotelRepository hotelRepository, StoryRepository storyRepository, MaterialRepository materialRepository, MaterialRequestRepository materialRequestRepository, MaterialService materialService) {
         this.reportRepository = reportRepository;
         this.countryRepository = countryRepository;
         this.hotelRepository = hotelRepository;
         this.storyRepository = storyRepository;
         this.materialRepository = materialRepository;
+        this.materialRequestRepository = materialRequestRepository;
+        this.materialService = materialService;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class ModeratorService implements IModeratorService {
     }
 
     @Override
-    public String setVerifiedStory(long id) {
+    public void setVerifiedStory(long id) {
         Optional<DbStory> dbStory = storyRepository.findById(id);
 
         if (dbStory.isPresent()) {
@@ -92,41 +93,74 @@ public class ModeratorService implements IModeratorService {
 
             if (dbMaterial.isPresent()) {
                 if (!dbMaterial.get().getStatus().equals(Status.Published)) {
-                    return "Story isn't published";
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story isn't published");
                 }
             }
 
             if (dbStory.get().isVerified()) {
-                return "Story has already been verified";
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story already been verified");
             }
 
 
         } else {
-            return "Story not found";
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Story not found");
         }
 
         storyRepository.setVerifiedStory(id);
-        return "OK";
     }
 
     @Override
-    public String publishMaterial(long id) {
-        Optional<DbMaterial> dbMaterial = materialRepository.findById(id);
+    public void publishMaterial(long id) {
+        Optional<DbMaterialRequest> dbMaterialRequest = materialRequestRepository.findById(id);
+        Optional<DbMaterial> dbMaterial = dbMaterialRequest.map(materialRequest -> Optional.ofNullable(materialRequest.getDbMaterial())).orElse(null);
 
-        if (dbMaterial.isPresent()) {
-            if (dbMaterial.get().getTypeMaterial().equals(TypeMaterial.Story)) {
-                return "Incorrect type of material";
-            }
-
-            if (!dbMaterial.get().getStatus().equals(Status.Approving)) {
-                return "Incorrect status of material";
-            }
-        } else {
-            return "Material not found";
+        if (dbMaterial.get().getTypeMaterial().equals(TypeMaterial.Story)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect type of material");
         }
 
-        materialRepository.changeStatus(id, Status.Published);
-        return "OK";
+        if (!dbMaterial.get().getStatus().equals(Status.Approving)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
+        }
+
+        materialRepository.changeStatus(dbMaterial.get().getId(), Status.Published);
+        materialRequestRepository.changeRequestStatus(id, RequestStatus.Approved);
+    }
+
+    @Override
+    public void rejectMaterial(long id) {
+        Optional<DbMaterialRequest> dbMaterialRequest = materialRequestRepository.findById(id);
+        Optional<DbMaterial> dbMaterial = dbMaterialRequest.map(materialRequest -> Optional.ofNullable(materialRequest.getDbMaterial())).orElse(null);
+
+         if (dbMaterial.get().getTypeMaterial().equals(TypeMaterial.Story)) {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect type of material");
+         }
+
+         if (!dbMaterial.get().getStatus().equals(Status.Approving)) {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
+         }
+
+         if (!dbMaterialRequest.isPresent() || !dbMaterialRequest.get().getRequestStatus().equals(RequestStatus.Unchecked)) {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material request");
+         }
+
+        materialRequestRepository.changeRequestStatus(id, RequestStatus.Rejected);
+    }
+
+    @Override
+    public void closeReport(ReviewedReport reviewedReport) {
+        Optional<DbReport> dbReport = reportRepository.findById(reviewedReport.getReportId());
+
+        if (dbReport.isPresent()) {
+
+            reportRepository.deleteById(reviewedReport.getReportId());
+
+            if (!reviewedReport.isMaterialGood()) {
+                materialService.deleteMaterial(dbReport.get().getMaterial().getId());
+            }
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Report not found");
+        }
     }
 
     @Override
@@ -137,5 +171,10 @@ public class ModeratorService implements IModeratorService {
         dbMaterial.setBest(true);
 
         materialRepository.save(dbMaterial);
+    }
+
+    @Override
+    public List<DbMaterialRequest> getAllMaterialRequests() {
+        return materialRequestRepository.findAllRequests(RequestStatus.Unchecked);
     }
 }

@@ -5,5 +5,4 @@ import com.ifelseelif.blsslab1.Models.DTO.ReviewedReport;
 
 public interface IReportService {
     void send(Report report);
-    String closeReport(ReviewedReport reviewedReport);
 }

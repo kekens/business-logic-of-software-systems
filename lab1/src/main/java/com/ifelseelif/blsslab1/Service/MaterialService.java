@@ -25,16 +25,18 @@ public class MaterialService implements IMaterialService {
     private final ReviewRepository reviewRepository;
     private final CountryRepository countryRepository;
     private final HotelRepository hotelRepository;
+    private final MaterialRequestRepository materialRequestRepository;
 
     public MaterialService(MaterialRepository materialRepository, StoryRepository storyRepository,
                            BlogRepository blogRepository, ReviewRepository reviewRepository,
-                           CountryRepository countryRepository, HotelRepository hotelRepository) {
+                           CountryRepository countryRepository, HotelRepository hotelRepository, MaterialRequestRepository materialRequestRepository) {
         this.materialRepository = materialRepository;
         this.storyRepository = storyRepository;
         this.blogRepository = blogRepository;
         this.reviewRepository = reviewRepository;
         this.countryRepository = countryRepository;
         this.hotelRepository = hotelRepository;
+        this.materialRequestRepository = materialRequestRepository;
     }
 
     @Override
@@ -131,6 +133,12 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Blog with id=" + id + " not found")
         ));
 
+        DbMaterial dbMaterial = materialRepository.findDbMaterialByBlog(dbBlog);
+
+        if (dbMaterial.getStatus().equals(Status.Published)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Blog has been published");
+        }
+
         DbCountry country = countryRepository.findById(blog.getCountryId()).orElseThrow(() ->
                 new ResponseStatusException(
                         HttpStatus.NOT_FOUND, ("Country with id=" + id + " not found")
@@ -141,6 +149,7 @@ public class MaterialService implements IMaterialService {
         dbBlog.setCountry(country);
 
         blogRepository.save(dbBlog);
+        materialRequestRepository.changeRequestStatus(dbMaterial.getId(), RequestStatus.Unchecked);
     }
 
     @Override
@@ -149,9 +158,15 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Review with id=" + id + " not found")
         ));
 
+        DbMaterial dbMaterial = materialRepository.findDbMaterialByReview(dbReview);
+
+        if (dbMaterial.getStatus().equals(Status.Published)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been published");
+        }
+
         DbHotel hotel = hotelRepository.findById(review.getHotelId()).orElseThrow(() ->
                 new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, ("Hotel with id=" + id + " not found")
+                        HttpStatus.NOT_FOUND, ("Hotel with id=" + review.getHotelId() + " not found")
                 ));
 
         dbReview.setAdvantages(review.getAdvantages());
@@ -168,6 +183,7 @@ public class MaterialService implements IMaterialService {
         dbReview.setScoreOfLocation(review.getScoreOfLocation());
 
         reviewRepository.save(dbReview);
+        materialRequestRepository.changeRequestStatus(dbMaterial.getId(), RequestStatus.Unchecked);
     }
 
     @Override
@@ -175,6 +191,12 @@ public class MaterialService implements IMaterialService {
         DbStory dbStory = storyRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, ("Story with id=" + id + " not found")
         ));
+
+        DbMaterial dbMaterial = materialRepository.findDbMaterialByStory(dbStory);
+
+        if (dbMaterial.getStatus().equals(Status.Published)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story has been published");
+        }
 
         Iterable<DbCountry> dbCountries = countryRepository.findAllById(story.getCountries());
 
@@ -197,27 +219,37 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public String sendMaterial(long id) {
+    public void sendMaterial(long id) {
 
         Optional<DbMaterial> dbMaterial = materialRepository.findById(id);
 
         if (dbMaterial.isPresent()) {
             if (!dbMaterial.get().getStatus().equals(Status.Draft)) {
-                return "Incorrect status of material";
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
             }
+
+            TypeMaterial typeMaterial = dbMaterial.get().getTypeMaterial();
+
+            if (typeMaterial.equals(TypeMaterial.Story)) {
+                materialRepository.changeStatus(id, Status.Published);
+            } else {
+                materialRepository.changeStatus(id, Status.Approving);
+            }
+
+            if (!dbMaterial.get().getTypeMaterial().equals(TypeMaterial.Story)) {
+
+                DbMaterialRequest dbMaterialRequest = new DbMaterialRequest();
+
+                dbMaterialRequest.setDbMaterial(dbMaterial.get());
+                dbMaterialRequest.setRequestStatus(RequestStatus.Unchecked);
+
+                materialRequestRepository.save(dbMaterialRequest);
+            }
+
         } else {
-            return "Material not found";
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Material not found");
         }
 
-        TypeMaterial typeMaterial = materialRepository.findTypeMaterialById(id);
-
-        if (typeMaterial.equals(TypeMaterial.Story)) {
-            materialRepository.changeStatus(id, Status.Published);
-        } else {
-            materialRepository.changeStatus(id, Status.Approving);
-        }
-
-        return "OK";
     }
 
     @Override

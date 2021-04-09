@@ -2,7 +2,9 @@ package com.ifelseelif.blsslab1.Database;
 
 import com.ifelseelif.blsslab1.Models.DTO.Status;
 import com.ifelseelif.blsslab1.Models.DTO.TypeMaterial;
+import com.ifelseelif.blsslab1.Models.Domain.DbBlog;
 import com.ifelseelif.blsslab1.Models.Domain.DbMaterial;
+import com.ifelseelif.blsslab1.Models.Domain.DbReview;
 import com.ifelseelif.blsslab1.Models.Domain.DbStory;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,11 +21,10 @@ public interface MaterialRepository extends CrudRepository<DbMaterial, Long> {
     @Transactional
     void changeStatus(long id, Status status);
 
-    @Query(value = "SELECT type_material FROM db_material WHERE id=:id", nativeQuery = true)
-    TypeMaterial findTypeMaterialById(long id);
-
     @Query(value = "SELECT * FROM db_material WHERE is_best=true", nativeQuery = true)
-    List<DbMaterial> getAllMaterials();
+    List<DbMaterial> getAllBestMaterials();
 
-    DbMaterial findDbMaterialByStory(DbStory id);
+    DbMaterial findDbMaterialByStory(DbStory dbStory);
+    DbMaterial findDbMaterialByBlog(DbBlog dbBlog);
+    DbMaterial findDbMaterialByReview(DbReview dbReview);
 }

@@ -1,12 +1,15 @@
 package com.ifelseelif.blsslab1.Controllers;
 
 import com.ifelseelif.blsslab1.Models.DTO.Hotel;
+import com.ifelseelif.blsslab1.Models.DTO.ReviewedReport;
 import com.ifelseelif.blsslab1.Models.DTO.StoryResponse;
+import com.ifelseelif.blsslab1.Models.Domain.DbMaterialRequest;
 import com.ifelseelif.blsslab1.Models.Domain.DbReport;
 import com.ifelseelif.blsslab1.Service.Interface.IModeratorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -20,15 +23,33 @@ public class ModeratorController {
         this.moderatorService = moderatorService;
     }
 
-    @PostMapping("/material/publish")
-    public ResponseEntity<String> publishMaterial(long id) {
-        String response = moderatorService.publishMaterial(id);
-
-        if (response.equals("OK")) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    @PostMapping("/requests/publish")
+    public ResponseEntity<String> publishMaterial(long id)
+    {
+        try {
+            moderatorService.publishMaterial(id);
+        } catch (ResponseStatusException r) {
+            return ResponseEntity.status(r.getStatus()).body(r.getMessage());
         }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/requests/reject")
+    public ResponseEntity<String> rejectMaterial(long id)
+    {
+        try {
+            moderatorService.rejectMaterial(id);
+        } catch (ResponseStatusException r) {
+            return ResponseEntity.status(r.getStatus()).body(r.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/requests/all")
+    public List<DbMaterialRequest> getAllMaterialRequests() {
+        return moderatorService.getAllMaterialRequests();
     }
 
     @GetMapping("/stories/all")
@@ -37,14 +58,8 @@ public class ModeratorController {
     }
 
     @PostMapping("/stories/verify")
-    public ResponseEntity<String> setVerifiedStory(long id) {
-        String response = moderatorService.setVerifiedStory(id);
-
-        if (response.equals("OK")) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+    public void setVerifiedStory(long id) {
+        moderatorService.setVerifiedStory(id);
     }
 
     @GetMapping("/reports/all")
@@ -55,6 +70,11 @@ public class ModeratorController {
     @GetMapping("/reports/{id}")
     public DbReport getReport(@PathVariable long id) {
         return moderatorService.getReport(id);
+    }
+
+    @PostMapping("/reports/close")
+    public void closeReport(@RequestBody ReviewedReport reviewedReport) {
+        moderatorService.closeReport(reviewedReport);
     }
 
     @PostMapping("/add/country")

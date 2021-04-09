@@ -8,6 +8,7 @@ import com.ifelseelif.blsslab1.Service.Interface.IMaterialService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -51,29 +52,46 @@ public class MaterialController {
     }
 
     @PutMapping("/update/blog/{id}")
-    public void updateMaterial(@RequestBody Blog blog, @PathVariable int id) {
-        materialService.updateBlog(id, blog);
+    public  ResponseEntity<String> updateMaterial(@RequestBody Blog blog, @PathVariable int id) {
+        try {
+            materialService.updateBlog(id, blog);
+        } catch (ResponseStatusException r) {
+            return ResponseEntity.status(r.getStatus()).body(r.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/update/review/{id}")
-    public void updateMaterial(@RequestBody Review review, @PathVariable int id) {
-        materialService.updateReview(id, review);
+    public ResponseEntity<String> updateMaterial(@RequestBody Review review, @PathVariable int id) {
+        try {
+            materialService.updateReview(id, review);
+        } catch (ResponseStatusException r) {
+            return ResponseEntity.status(r.getStatus()).body(r.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/update/story/{id}")
-    public void updateMaterial(@RequestBody Story story, @PathVariable int id) {
-        materialService.updateStory(id, story);
+    public  ResponseEntity<String> updateMaterial(@RequestBody Story story, @PathVariable int id) {
+        try {
+            materialService.updateStory(id, story);
+        } catch (ResponseStatusException r) {
+            return ResponseEntity.status(r.getStatus()).body(r.getMessage());
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/send")
     public ResponseEntity<String> send(long id) {
-        String response = materialService.sendMaterial(id);
-
-        if (response.equals("OK")) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        try {
+            materialService.sendMaterial(id);
+        } catch (ResponseStatusException r) {
+            return ResponseEntity.status(r.getStatus()).body(r.getMessage());
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

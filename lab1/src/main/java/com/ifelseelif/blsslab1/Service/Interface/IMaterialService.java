@@ -28,7 +28,7 @@ public interface IMaterialService {
 
     void updateStory(long id, Story story);
 
-    String sendMaterial(long id);
+    void sendMaterial(long id);
 
     List<DbMaterial> getAllBestMaterials();
 }

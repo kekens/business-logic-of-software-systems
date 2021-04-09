@@ -6,7 +6,11 @@ import com.ifelseelif.blsslab1.Models.DTO.ReviewedReport;
 import com.ifelseelif.blsslab1.Models.Domain.DbMaterial;
 import com.ifelseelif.blsslab1.Models.Domain.DbReport;
 import com.ifelseelif.blsslab1.Service.Interface.IReportService;
+import lombok.NoArgsConstructor;
+import org.aspectj.weaver.ast.Not;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -14,12 +18,10 @@ import java.util.Optional;
 public class ReportService implements IReportService {
 
     private final ReportRepository reportRepository;
-    private final MaterialService materialService;
 
 
-    public ReportService(ReportRepository reportRepository, MaterialService materialService) {
+    public ReportService(ReportRepository reportRepository) {
         this.reportRepository = reportRepository;
-        this.materialService = materialService;
     }
 
     @Override
@@ -30,22 +32,5 @@ public class ReportService implements IReportService {
         this.reportRepository.save(dbReport);
     }
 
-    @Override
-    public String closeReport(ReviewedReport reviewedReport) {
-        Optional<DbReport> dbReport = reportRepository.findById(reviewedReport.getReportId());
 
-        if (dbReport.isPresent()) {
-
-            reportRepository.deleteById(reviewedReport.getReportId());
-
-            if (!reviewedReport.isMaterialGood()) {
-                materialService.deleteMaterial(dbReport.get().getMaterial().getId());
-            }
-
-        } else {
-            return "Report not found";
-        }
-
-        return "OK";
-    }
 }
