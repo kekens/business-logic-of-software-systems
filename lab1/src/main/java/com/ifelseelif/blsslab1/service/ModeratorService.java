@@ -7,6 +7,7 @@ import com.ifelseelif.blsslab1.service.interfaces.IModeratorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ public class ModeratorService implements IModeratorService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void publishMaterial(long id) {
         Optional<DbMaterialRequest> dbMaterialRequest = materialRequestRepository.findById(id);
         Optional<DbMaterial> dbMaterial = dbMaterialRequest.map(DbMaterialRequest::getDbMaterial);
@@ -156,6 +158,7 @@ public class ModeratorService implements IModeratorService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void closeReport(ReviewedReport reviewedReport) {
         Optional<DbReport> dbReport = reportRepository.findById(reviewedReport.getReportId());
 

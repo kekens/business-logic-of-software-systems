@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -37,6 +38,8 @@ public class MaterialService implements IMaterialService {
         this.countryRepository = countryRepository;
         this.hotelRepository = hotelRepository;
         this.materialRequestRepository = materialRequestRepository;
+
+
     }
 
     @Override
@@ -74,6 +77,7 @@ public class MaterialService implements IMaterialService {
         materialRepository.save(dbMaterial);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createBlog(Blog blog) {
         DbBlog dbBlog = new DbBlog();
@@ -88,6 +92,7 @@ public class MaterialService implements IMaterialService {
         this.createMaterial(TypeMaterial.Blog);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createReview(Review review) {
         DbReview dbReview = new DbReview();
@@ -107,6 +112,7 @@ public class MaterialService implements IMaterialService {
         this.createMaterial(TypeMaterial.Review);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void createStory(Story story) {
         DbStory dbStory = new DbStory();
@@ -123,10 +129,10 @@ public class MaterialService implements IMaterialService {
 
         dbStory.setCountry(countrySet);
         storyRepository.save(dbStory);
-
         this.createMaterial(TypeMaterial.Story);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateBlog(long id, Blog blog) {
         DbBlog dbBlog = blogRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
@@ -152,6 +158,7 @@ public class MaterialService implements IMaterialService {
         materialRequestRepository.changeRequestStatus(dbMaterial.getId(), RequestStatus.Unchecked);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateReview(long id, Review review) {
         DbReview dbReview = reviewRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
@@ -186,6 +193,7 @@ public class MaterialService implements IMaterialService {
         materialRequestRepository.changeRequestStatus(dbMaterial.getId(), RequestStatus.Unchecked);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateStory(long id, Story story) {
         DbStory dbStory = storyRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
@@ -218,6 +226,7 @@ public class MaterialService implements IMaterialService {
         storyRepository.save(dbStory);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void sendMaterial(long id) {
 
