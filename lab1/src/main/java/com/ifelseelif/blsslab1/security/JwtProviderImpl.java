@@ -1,32 +1,35 @@
 package com.ifelseelif.blsslab1.security;
 
 
-import java.security.SecureRandom;
-import java.util.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class JwtProviderImpl implements JwtProvider {
-    private Set<String> tokenCache = new HashSet<>();
-
-    private static final SecureRandom secureRandom = new SecureRandom();
-    private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
-
+    @Value("$(jwt.secret)")
+    private String jwtSecret;
 
     @Override
+    public String generateToken(String login) {
+        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return Jwts.builder()
+                .setSubject(login)
+                .setExpiration(date)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
     public boolean validateToken(String token) {
-        return tokenCache.contains(token);
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    @Override
-    public String generateToken() {
-        String token = generateNewToken();
-        tokenCache.add(token);
-
-        return token;
-    }
-
-    private static String generateNewToken() {
-        byte[] randomBytes = new byte[24];
-        secureRandom.nextBytes(randomBytes);
-        return base64Encoder.encodeToString(randomBytes);
-    }
 }
