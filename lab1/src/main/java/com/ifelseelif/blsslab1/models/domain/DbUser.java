@@ -3,16 +3,19 @@ package com.ifelseelif.blsslab1.models.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Data
-public class DbReport {
+public class DbUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private DbMaterial material;
+    private String username;
+    private String password;
 
-    private String text;
+    @OneToMany
+    private Collection<DbRole> roles;
+
 }

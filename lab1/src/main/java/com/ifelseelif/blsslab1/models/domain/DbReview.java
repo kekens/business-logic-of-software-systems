@@ -12,7 +12,7 @@ import java.sql.Date;
 public class DbReview {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private int scoreOfLocation;
     private int scoreOfService;
