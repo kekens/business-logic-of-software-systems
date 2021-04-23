@@ -1,4 +1,7 @@
 package com.ifelseelif.blsslab1.security;
 
-public class JwtProvider {
+public interface JwtProvider {
+    boolean validateToken(String token);
+
+    String generateToken();
 }
