@@ -28,7 +28,7 @@ public class UserService implements IUserService {
     }
 
     public DbUser findByLogin(String username) {
-        return userRepository.findByLogin(username);
+        return userRepository.findByUsername(username);
     }
 
     @Override

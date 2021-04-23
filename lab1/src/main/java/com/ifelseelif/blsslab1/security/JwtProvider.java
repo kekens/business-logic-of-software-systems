@@ -1,5 +1,7 @@
 package com.ifelseelif.blsslab1.security;
 
+import org.springframework.stereotype.Component;
+
 public interface JwtProvider {
     boolean validateToken(String token);
 
