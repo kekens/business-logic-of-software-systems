@@ -15,7 +15,7 @@ public class DbUser {
     private String username;
     private String password;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Collection<DbRole> roles;
 
 }

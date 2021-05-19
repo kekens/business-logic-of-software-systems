@@ -53,6 +53,7 @@ public class AuthService implements IAuthService {
     @Override
     public AuthResponse login(UserDto userDto) {
         Authentication authenticate = null;
+
         try {
             authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUsername(),
                     userDto.getPassword()));
@@ -64,6 +65,8 @@ public class AuthService implements IAuthService {
         assert authenticate != null;
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String authenticationToken = jwtProvider.generateToken(authenticate.getName());
+        System.out.println(authenticationToken);
+        System.out.println(authenticate.getName());
         String username = userDto.getUsername();
         return AuthResponse.builder()
                 .token(authenticationToken)

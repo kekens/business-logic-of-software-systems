@@ -31,6 +31,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean  {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         logger.info("do filter...");
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
+        System.out.println("CCC " + ((HttpServletRequest) servletRequest).getUserPrincipal());
         if (token != null && jwtProvider.validateToken(token)) {
             String userLogin = jwtProvider.getLoginFromToken(token);
             CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(userLogin);
@@ -38,8 +39,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean  {
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(servletRequest, servletResponse);
-    }
 
+    }
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearer = request.getHeader(AUTHORIZATION);
