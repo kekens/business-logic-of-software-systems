@@ -26,7 +26,4 @@ public class AuthController {
     public AuthResponse login(@RequestBody UserDto userDto) {
         return authService.login(userDto);
     }
-
-
-
 }

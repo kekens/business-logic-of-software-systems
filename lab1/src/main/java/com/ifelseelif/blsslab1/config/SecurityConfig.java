@@ -1,6 +1,7 @@
 package com.ifelseelif.blsslab1.config;
 
 import com.ifelseelif.blsslab1.security.JwtAuthenticationFilter;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.builders.ParameterBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.service.Parameter;
+
+import java.util.Collections;
+import java.util.List;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -42,5 +54,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Docket docket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .forCodeGeneration(true)
+                .globalOperationParameters(globalParameterList())
+                .select()
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    private List<Parameter> globalParameterList(){
+        val authTokenHeader =
+                new ParameterBuilder()
+                        .name("Authorization") // name of the header
+                        .modelRef(new ModelRef("string")) // data-type of the header
+                        .required(false) // required/optional
+                        .parameterType("header") // for query-param, this value can be 'query'
+                        .description("Basic Auth Token")
+                        .build();
+
+        return Collections.singletonList(authTokenHeader);
     }
 }
