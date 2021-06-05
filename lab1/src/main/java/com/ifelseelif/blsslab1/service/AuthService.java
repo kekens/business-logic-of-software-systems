@@ -63,11 +63,9 @@ public class AuthService implements IAuthService {
                     .build();
         }
         assert authenticate != null;
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
         String authenticationToken = jwtProvider.generateToken(authenticate.getName());
         System.out.println(authenticationToken);
         System.out.println(authenticate.getName());
-        String username = userDto.getUsername();
         return AuthResponse.builder()
                 .token(authenticationToken)
                 .build();
