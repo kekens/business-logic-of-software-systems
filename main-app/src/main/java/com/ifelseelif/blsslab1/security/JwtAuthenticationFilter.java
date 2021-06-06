@@ -46,8 +46,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean  {
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
-        String bearer = request.getHeader(AUTHORIZATION);
-        return bearer;
+        return request.getHeader(AUTHORIZATION);
     }
 
     private boolean IsEmptyOrNull(String string){
