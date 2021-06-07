@@ -25,10 +25,12 @@ public class ModeratorService implements IModeratorService {
     private final MaterialRepository materialRepository;
     private final MaterialRequestRepository materialRequestRepository;
     private final MaterialService materialService;
+    private final AnswerMessageService answerMessageService;
 
     @Autowired
     public ModeratorService(ReportRepository reportRepository, CountryRepository countryRepository,
-                            HotelRepository hotelRepository, StoryRepository storyRepository, MaterialRepository materialRepository, MaterialRequestRepository materialRequestRepository, MaterialService materialService) {
+                            HotelRepository hotelRepository, StoryRepository storyRepository, MaterialRepository materialRepository,
+                            MaterialRequestRepository materialRequestRepository, MaterialService materialService, AnswerMessageService answerMessageService) {
         this.reportRepository = reportRepository;
         this.countryRepository = countryRepository;
         this.hotelRepository = hotelRepository;
@@ -36,6 +38,7 @@ public class ModeratorService implements IModeratorService {
         this.materialRepository = materialRepository;
         this.materialRequestRepository = materialRequestRepository;
         this.materialService = materialService;
+        this.answerMessageService = answerMessageService;
     }
 
     @Override
@@ -134,8 +137,8 @@ public class ModeratorService implements IModeratorService {
     }
 
     @Override
-    public void rejectMaterial(long id) {
-        Optional<MaterialRequest> dbMaterialRequest = materialRequestRepository.findById(id);
+    public void rejectMaterial(ModeratorRejectRequest moderatorRejectRequest) {
+        Optional<MaterialRequest> dbMaterialRequest = materialRequestRepository.findById(moderatorRejectRequest.getId());
         Optional<Material> dbMaterial = dbMaterialRequest.map(MaterialRequest::getMaterial);
 
         if (dbMaterial.isPresent()) {
@@ -150,7 +153,10 @@ public class ModeratorService implements IModeratorService {
             if (!dbMaterialRequest.get().getRequestStatus().equals(RequestStatus.Unchecked)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material request");
             }
-            materialRequestRepository.changeRequestStatus(id, RequestStatus.Rejected);
+
+            materialRequestRepository.changeRequestStatus(moderatorRejectRequest.getId(), RequestStatus.Rejected);
+            answerMessageService.sendAnswerMessage(
+                    new ModeratorAnswer(moderatorRejectRequest.getId(), moderatorRejectRequest.getReason(), RequestStatus.Rejected));
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Material not found");
         }

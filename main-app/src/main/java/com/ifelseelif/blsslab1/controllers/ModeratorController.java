@@ -1,8 +1,6 @@
 package com.ifelseelif.blsslab1.controllers;
 
-import com.ifelseelif.blsslab1.models.dto.HotelDto;
-import com.ifelseelif.blsslab1.models.dto.ReviewedReport;
-import com.ifelseelif.blsslab1.models.dto.StoryResponse;
+import com.ifelseelif.blsslab1.models.dto.*;
 import com.ifelseelif.blsslab1.models.domain.MaterialRequest;
 import com.ifelseelif.blsslab1.models.domain.Report;
 import com.ifelseelif.blsslab1.service.interfaces.IModeratorService;
@@ -36,10 +34,10 @@ public class ModeratorController {
     }
 
     @PostMapping("/requests/reject")
-    public ResponseEntity<String> rejectMaterial(long id)
+    public ResponseEntity<String> rejectMaterial(@RequestBody ModeratorRejectRequest moderatorRejectRequest)
     {
         try {
-            moderatorService.rejectMaterial(id);
+            moderatorService.rejectMaterial(moderatorRejectRequest);
         } catch (ResponseStatusException r) {
             return ResponseEntity.status(r.getStatus()).body(r.getMessage());
         }

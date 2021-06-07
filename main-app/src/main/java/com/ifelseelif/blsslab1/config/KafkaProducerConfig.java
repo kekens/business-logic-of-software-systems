@@ -1,8 +1,6 @@
 package com.ifelseelif.blsslab1.config;
 
 import com.ifelseelif.blsslab1.models.dto.ModeratorAnswer;
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import kafka.tools.ConsoleProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.beans.factory.annotation.Value;
