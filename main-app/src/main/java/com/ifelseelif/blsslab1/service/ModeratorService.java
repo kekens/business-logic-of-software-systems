@@ -45,7 +45,7 @@ public class ModeratorService implements IModeratorService {
 
     @Override
     public Report getReport(long id) {
-        return reportRepository.findDbReportById(id);
+        return reportRepository.findReportById(id);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ModeratorService implements IModeratorService {
 
         if (dbStory.isPresent()) {
 
-            Optional<Material> dbMaterial = Optional.ofNullable(materialRepository.findDbMaterialByStory(dbStory.get()));
+            Optional<Material> dbMaterial = Optional.ofNullable(materialRepository.findMaterialByStory(dbStory.get()));
 
             if (dbMaterial.isPresent()) {
                 if (!dbMaterial.get().getStatus().equals(Status.Published)) {

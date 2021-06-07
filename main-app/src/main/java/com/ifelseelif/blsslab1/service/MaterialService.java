@@ -139,7 +139,7 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Blog with id=" + id + " not found")
         ));
 
-        Material material = materialRepository.findDbMaterialByBlog(blog);
+        Material material = materialRepository.findMaterialByBlog(blog);
 
         if (material.getStatus().equals(Status.Published)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Blog has been published");
@@ -165,7 +165,7 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Review with id=" + id + " not found")
         ));
 
-        Material material = materialRepository.findDbMaterialByReview(review);
+        Material material = materialRepository.findMaterialByReview(review);
 
         if (material.getStatus().equals(Status.Published)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been published");
@@ -200,7 +200,7 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Story with id=" + id + " not found")
         ));
 
-        Material material = materialRepository.findDbMaterialByStory(story);
+        Material material = materialRepository.findMaterialByStory(story);
 
         if (material.getStatus().equals(Status.Published)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story has been published");

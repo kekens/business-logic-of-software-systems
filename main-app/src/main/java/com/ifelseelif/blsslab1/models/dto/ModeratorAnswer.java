@@ -1,5 +1,6 @@
 package com.ifelseelif.blsslab1.models.dto;
 
+import com.ifelseelif.blsslab1.models.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,4 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModeratorAnswer {
+
+    public User user;
 }

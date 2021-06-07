@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface ReportRepository extends CrudRepository<Report, Long> {
 
-    Report findDbReportById(long id);
+    Report findReportById(long id);
 }

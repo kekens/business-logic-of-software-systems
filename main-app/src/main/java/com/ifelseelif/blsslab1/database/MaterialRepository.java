@@ -23,7 +23,7 @@ public interface MaterialRepository extends CrudRepository<Material, Long> {
     @Query(value = "SELECT * FROM material WHERE is_best=true", nativeQuery = true)
     List<Material> getAllBestMaterials();
 
-    Material findDbMaterialByStory(Story story);
-    Material findDbMaterialByBlog(Blog blog);
-    Material findDbMaterialByReview(Review review);
+    Material findMaterialByStory(Story story);
+    Material findMaterialByBlog(Blog blog);
+    Material findMaterialByReview(Review review);
 }
