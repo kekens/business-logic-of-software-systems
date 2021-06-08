@@ -14,17 +14,16 @@ import java.util.Collections;
 @Component
 public class UserService implements IUserService {
 
-    private final
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private final RoleRepository roleEntityRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleEntityRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleEntityRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleEntityRepository = roleEntityRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User findByLogin(String username) {

@@ -33,7 +33,7 @@ public class Material {
 
     private boolean isBest;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     public Material(long id) {

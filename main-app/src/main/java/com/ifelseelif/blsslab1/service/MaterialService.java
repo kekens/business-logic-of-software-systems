@@ -3,14 +3,12 @@ package com.ifelseelif.blsslab1.service;
 import com.ifelseelif.blsslab1.database.*;
 import com.ifelseelif.blsslab1.models.dto.*;
 import com.ifelseelif.blsslab1.models.domain.*;
+import com.ifelseelif.blsslab1.security.CustomUserDetails;
 import com.ifelseelif.blsslab1.service.interfaces.IMaterialService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -45,24 +43,47 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public List<Material> getAllMaterials(String username) {
-        System.out.println("username mater " + username);
-        System.out.println("\nauthorities " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        return materialRepository.findAllByUser(userRepository.findByUsername(username));
+    public List<Material> getAllMaterials() {
+        CustomUserDetails principal = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+
+        if (principal.getAuthorities().toString().contains("MODERATOR")) {
+            System.out.println("YA TUT");
+            return (List<Material>) materialRepository.findAll();
+        } else {
+            return materialRepository.findAllByUser(userRepository.findByUsername(principal.getUsername()));
+        }
     }
 
     @Override
     public Material getMaterial(long id) {
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername());
+
+        Optional<Material> material = materialRepository.findById(id);
+
+        if (material.isPresent() && !material.get().getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect material ID");
+        }
+
         return materialRepository.getMaterialById(id);
     }
 
     @Override
     public void deleteMaterial(long id) {
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername());
+
+        Optional<Material> material = materialRepository.findById(id);
+
+        if (material.isPresent() && !material.get().getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect material ID");
+        }
+
         materialRepository.deleteById(id);
     }
 
     @Override
-    public void createMaterial(TypeMaterial typeMaterial, String username) {
+    public void createMaterial(TypeMaterial typeMaterial) {
         Material material = new Material();
         material.setTypeMaterial(typeMaterial);
         material.setStatus(Status.Draft);
@@ -78,6 +99,8 @@ public class MaterialService implements IMaterialService {
                 break;
         }
 
+        String username = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
         material.setUser(userRepository.findByUsername(username));
 
         materialRepository.save(material);
@@ -85,7 +108,7 @@ public class MaterialService implements IMaterialService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createBlog(BlogDto blogDto, String username) {
+    public void createBlog(BlogDto blogDto) {
         Blog blog = new Blog();
         blog.setHeader(blogDto.getHeader());
         blog.setBriefInformation(blogDto.getBriefInformation());
@@ -95,12 +118,12 @@ public class MaterialService implements IMaterialService {
 
         blogRepository.save(blog);
 
-        this.createMaterial(TypeMaterial.Blog, username);
+        this.createMaterial(TypeMaterial.Blog);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createReview(ReviewDto reviewDto, String username) {
+    public void createReview(ReviewDto reviewDto) {
         Review review = new Review();
         review.setScoreOfLocation(reviewDto.getScoreOfLocation());
         review.setScoreOfService(reviewDto.getScoreOfService());
@@ -115,12 +138,12 @@ public class MaterialService implements IMaterialService {
 
         reviewRepository.save(review);
 
-        this.createMaterial(TypeMaterial.Review, username);
+        this.createMaterial(TypeMaterial.Review);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createStory(StoryDto storyDto, String username) {
+    public void createStory(StoryDto storyDto) {
         Story story = new Story();
         story.setHeader(storyDto.getHeader());
         story.setTravelDate(storyDto.getTravelDate());
@@ -135,7 +158,7 @@ public class MaterialService implements IMaterialService {
 
         story.setCountry(countrySet);
         storyRepository.save(story);
-        this.createMaterial(TypeMaterial.Story, username);
+        this.createMaterial(TypeMaterial.Story);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -145,7 +168,14 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Blog with id=" + id + " not found")
         ));
 
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername());
+
         Material material = materialRepository.findMaterialByBlog(blog);
+
+        if (!material.getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect blog ID");
+        }
 
         if (material.getStatus().equals(Status.Published)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Blog has been published");
@@ -171,7 +201,14 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Review with id=" + id + " not found")
         ));
 
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername());
+
         Material material = materialRepository.findMaterialByReview(review);
+
+        if (!material.getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect review ID");
+        }
 
         if (material.getStatus().equals(Status.Published)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been published");
@@ -206,7 +243,14 @@ public class MaterialService implements IMaterialService {
                 HttpStatus.NOT_FOUND, ("Story with id=" + id + " not found")
         ));
 
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername());
+
         Material material = materialRepository.findMaterialByStory(story);
+
+        if (!material.getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect story ID");
+        }
 
         if (material.getStatus().equals(Status.Published)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story has been published");
@@ -236,14 +280,22 @@ public class MaterialService implements IMaterialService {
     @Override
     public void sendMaterial(long id) {
 
-        Optional<Material> dbMaterial = materialRepository.findById(id);
+        Optional<Material> material = materialRepository.findById(id);
 
-        if (dbMaterial.isPresent()) {
-            if (!dbMaterial.get().getStatus().equals(Status.Draft)) {
+        CustomUserDetails principal = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findByUsername(principal.getUsername());
+
+        if (material.isPresent()) {
+
+            if (!material.get().getUser().equals(user)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect material ID");
+            }
+
+            if (!material.get().getStatus().equals(Status.Draft)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
             }
 
-            TypeMaterial typeMaterial = dbMaterial.get().getTypeMaterial();
+            TypeMaterial typeMaterial = material.get().getTypeMaterial();
 
             if (typeMaterial.equals(TypeMaterial.Story)) {
                 materialRepository.changeStatus(id, Status.Published);
@@ -251,11 +303,11 @@ public class MaterialService implements IMaterialService {
                 materialRepository.changeStatus(id, Status.Approving);
             }
 
-            if (!dbMaterial.get().getTypeMaterial().equals(TypeMaterial.Story)) {
+            if (!material.get().getTypeMaterial().equals(TypeMaterial.Story)) {
 
                 MaterialRequest materialRequest = new MaterialRequest();
 
-                materialRequest.setMaterial(dbMaterial.get());
+                materialRequest.setMaterial(material.get());
                 materialRequest.setRequestStatus(RequestStatus.Unchecked);
 
                 materialRequestRepository.save(materialRequest);

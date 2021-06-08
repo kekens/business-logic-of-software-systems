@@ -23,8 +23,8 @@ public class MaterialController {
     }
 
     @GetMapping("/all")
-    public List<Material> getAllMaterials(@ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
-        return materialService.getAllMaterials(username);
+    public List<Material> getAllMaterials() {
+        return materialService.getAllMaterials();
     }
 
     @GetMapping("/all/best")
@@ -38,21 +38,18 @@ public class MaterialController {
     }
 
     @PostMapping("/create/blog")
-    public void createMaterial(@RequestBody BlogDto blogDto,
-                               @ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
-        materialService.createBlog(blogDto, username);
+    public void createMaterial(@RequestBody BlogDto blogDto) {
+        materialService.createBlog(blogDto);
     }
 
     @PostMapping("/create/review")
-    public void createMaterial(@RequestBody ReviewDto reviewDto,
-                               @ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
-        materialService.createReview(reviewDto, username);
+    public void createMaterial(@RequestBody ReviewDto reviewDto) {
+        materialService.createReview(reviewDto);
     }
 
     @PostMapping("/create/story")
-    public void createMaterial(@RequestBody StoryDto storyDto,
-                               @ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
-        materialService.createStory(storyDto, username);
+    public void createMaterial(@RequestBody StoryDto storyDto) {
+        materialService.createStory(storyDto);
     }
 
     @PutMapping("/update/blog/{id}")

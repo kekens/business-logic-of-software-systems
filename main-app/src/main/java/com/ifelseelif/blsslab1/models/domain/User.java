@@ -1,12 +1,14 @@
 package com.ifelseelif.blsslab1.models.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
