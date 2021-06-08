@@ -33,6 +33,9 @@ public class Material {
 
     private boolean isBest;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
     public Material(long id) {
         this.id = id;
     }

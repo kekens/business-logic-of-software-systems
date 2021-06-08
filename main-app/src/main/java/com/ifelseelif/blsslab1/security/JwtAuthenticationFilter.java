@@ -34,10 +34,12 @@ public class JwtAuthenticationFilter extends GenericFilterBean  {
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (!IsEmptyOrNull(token) && jwtProvider.validateToken(token)) {
             String userLogin = jwtProvider.getLoginFromToken(token);
-            System.out.println(token+ "token" );
+            System.out.println(token+ " token");
             CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(userLogin);
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
+            System.out.println("Set attribute username " + userLogin);
+            servletRequest.setAttribute("username", jwtProvider.getLoginFromToken(token));
         }
         filterChain.doFilter(servletRequest, servletResponse);
 

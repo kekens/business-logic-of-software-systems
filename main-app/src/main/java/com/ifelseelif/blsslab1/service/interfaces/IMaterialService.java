@@ -7,19 +7,19 @@ import java.util.List;
 
 public interface IMaterialService {
 
-    List<Material> getAllMaterials();
+    List<Material> getAllMaterials(String username);
 
     Material getMaterial(long id);
 
     void deleteMaterial(long id);
 
-    void createMaterial(TypeMaterial typeMaterial);
+    void createMaterial(TypeMaterial typeMaterial, String username);
 
-    void createBlog(BlogDto blogDto);
+    void createBlog(BlogDto blogDto, String username);
 
-    void createReview(ReviewDto reviewDto);
+    void createReview(ReviewDto reviewDto, String username);
 
-    void createStory(StoryDto storyDto);
+    void createStory(StoryDto storyDto, String username);
 
     void updateBlog(long id, BlogDto blogDto);
 

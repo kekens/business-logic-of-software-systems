@@ -3,6 +3,10 @@
     {
       "name": "kafka.server",
       "type": "java.lang.String"
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String"
     }
   ]
 }

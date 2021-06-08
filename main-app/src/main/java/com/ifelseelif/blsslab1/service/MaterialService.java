@@ -7,8 +7,10 @@ import com.ifelseelif.blsslab1.service.interfaces.IMaterialService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -18,7 +20,6 @@ import java.util.Set;
 
 @Service
 public class MaterialService implements IMaterialService {
-    private Logger logger = LoggerFactory.getLogger(MaterialService.class);
 
     private final MaterialRepository materialRepository;
     private final StoryRepository storyRepository;
@@ -27,10 +28,12 @@ public class MaterialService implements IMaterialService {
     private final CountryRepository countryRepository;
     private final HotelRepository hotelRepository;
     private final MaterialRequestRepository materialRequestRepository;
+    private final UserRepository userRepository;
 
     public MaterialService(MaterialRepository materialRepository, StoryRepository storyRepository,
-                           BlogRepository blogRepository, ReviewRepository reviewRepository,
-                           CountryRepository countryRepository, HotelRepository hotelRepository, MaterialRequestRepository materialRequestRepository) {
+                           BlogRepository blogRepository, ReviewRepository reviewRepository, CountryRepository countryRepository,
+                           HotelRepository hotelRepository, MaterialRequestRepository materialRequestRepository,
+                           UserRepository userRepository) {
         this.materialRepository = materialRepository;
         this.storyRepository = storyRepository;
         this.blogRepository = blogRepository;
@@ -38,13 +41,14 @@ public class MaterialService implements IMaterialService {
         this.countryRepository = countryRepository;
         this.hotelRepository = hotelRepository;
         this.materialRequestRepository = materialRequestRepository;
-
-
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<Material> getAllMaterials() {
-        return (List<Material>) materialRepository.findAll();
+    public List<Material> getAllMaterials(String username) {
+        System.out.println("username mater " + username);
+        System.out.println("\nauthorities " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+        return materialRepository.findAllByUser(userRepository.findByUsername(username));
     }
 
     @Override
@@ -58,7 +62,7 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public void createMaterial(TypeMaterial typeMaterial) {
+    public void createMaterial(TypeMaterial typeMaterial, String username) {
         Material material = new Material();
         material.setTypeMaterial(typeMaterial);
         material.setStatus(Status.Draft);
@@ -74,12 +78,14 @@ public class MaterialService implements IMaterialService {
                 break;
         }
 
+        material.setUser(userRepository.findByUsername(username));
+
         materialRepository.save(material);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createBlog(BlogDto blogDto) {
+    public void createBlog(BlogDto blogDto, String username) {
         Blog blog = new Blog();
         blog.setHeader(blogDto.getHeader());
         blog.setBriefInformation(blogDto.getBriefInformation());
@@ -89,12 +95,12 @@ public class MaterialService implements IMaterialService {
 
         blogRepository.save(blog);
 
-        this.createMaterial(TypeMaterial.Blog);
+        this.createMaterial(TypeMaterial.Blog, username);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createReview(ReviewDto reviewDto) {
+    public void createReview(ReviewDto reviewDto, String username) {
         Review review = new Review();
         review.setScoreOfLocation(reviewDto.getScoreOfLocation());
         review.setScoreOfService(reviewDto.getScoreOfService());
@@ -109,12 +115,12 @@ public class MaterialService implements IMaterialService {
 
         reviewRepository.save(review);
 
-        this.createMaterial(TypeMaterial.Review);
+        this.createMaterial(TypeMaterial.Review, username);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void createStory(StoryDto storyDto) {
+    public void createStory(StoryDto storyDto, String username) {
         Story story = new Story();
         story.setHeader(storyDto.getHeader());
         story.setTravelDate(storyDto.getTravelDate());
@@ -129,7 +135,7 @@ public class MaterialService implements IMaterialService {
 
         story.setCountry(countrySet);
         storyRepository.save(story);
-        this.createMaterial(TypeMaterial.Story);
+        this.createMaterial(TypeMaterial.Story, username);
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -5,6 +5,7 @@ import com.ifelseelif.blsslab1.models.dto.ReviewDto;
 import com.ifelseelif.blsslab1.models.dto.StoryDto;
 import com.ifelseelif.blsslab1.models.domain.Material;
 import com.ifelseelif.blsslab1.service.interfaces.IMaterialService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,8 @@ public class MaterialController {
     }
 
     @GetMapping("/all")
-    public List<Material> getAllMaterials() {
-        return materialService.getAllMaterials();
+    public List<Material> getAllMaterials(@ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
+        return materialService.getAllMaterials(username);
     }
 
     @GetMapping("/all/best")
@@ -37,18 +38,21 @@ public class MaterialController {
     }
 
     @PostMapping("/create/blog")
-    public void createMaterial(@RequestBody BlogDto blogDto) {
-        materialService.createBlog(blogDto);
+    public void createMaterial(@RequestBody BlogDto blogDto,
+                               @ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
+        materialService.createBlog(blogDto, username);
     }
 
     @PostMapping("/create/review")
-    public void createMaterial(@RequestBody ReviewDto reviewDto) {
-        materialService.createReview(reviewDto);
+    public void createMaterial(@RequestBody ReviewDto reviewDto,
+                               @ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
+        materialService.createReview(reviewDto, username);
     }
 
     @PostMapping("/create/story")
-    public void createMaterial(@RequestBody StoryDto storyDto) {
-        materialService.createStory(storyDto);
+    public void createMaterial(@RequestBody StoryDto storyDto,
+                               @ApiParam(value = "username", hidden = true) @RequestAttribute("username") String username) {
+        materialService.createStory(storyDto, username);
     }
 
     @PutMapping("/update/blog/{id}")
