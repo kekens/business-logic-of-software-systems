@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ModeratorRejectRequest {
-
     private Long id;
     private String reason;
 

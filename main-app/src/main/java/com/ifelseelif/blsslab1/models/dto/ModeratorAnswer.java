@@ -1,5 +1,6 @@
 package com.ifelseelif.blsslab1.models.dto;
 
+import com.ifelseelif.blsslab1.models.domain.Material;
 import com.ifelseelif.blsslab1.models.domain.MaterialRequest;
 import com.ifelseelif.blsslab1.models.domain.User;
 import lombok.AllArgsConstructor;
@@ -11,15 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ModeratorAnswer {
 
-    private Long id;
+    private MaterialRequest materialRequest;
     private String reason;
     private RequestStatus requestStatus;
 
     @Override
     public String toString() {
         return "ModeratorAnswer{" +
-                "id=" + id +
+                "materialRequest=" + materialRequest +
                 ", reason='" + reason + '\'' +
+                ", requestStatus=" + requestStatus +
                 '}';
     }
 }

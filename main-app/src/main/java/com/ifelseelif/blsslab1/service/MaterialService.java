@@ -177,8 +177,8 @@ public class MaterialService implements IMaterialService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect blog ID");
         }
 
-        if (material.getStatus().equals(Status.Published)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Blog has been published");
+        if (!material.getStatus().equals(Status.Draft)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been sent");
         }
 
         Country country = countryRepository.findById(blogDto.getCountryId()).orElseThrow(() ->
@@ -210,8 +210,8 @@ public class MaterialService implements IMaterialService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect review ID");
         }
 
-        if (material.getStatus().equals(Status.Published)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been published");
+        if (!material.getStatus().equals(Status.Draft)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been sent");
         }
 
         Hotel hotel = hotelRepository.findById(reviewDto.getHotelId()).orElseThrow(() ->
@@ -252,8 +252,8 @@ public class MaterialService implements IMaterialService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect story ID");
         }
 
-        if (material.getStatus().equals(Status.Published)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Story has been published");
+        if (!material.getStatus().equals(Status.Draft)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been sent");
         }
 
         Iterable<Country> dbCountries = countryRepository.findAllById(storyDto.getCountries());

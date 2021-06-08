@@ -128,7 +128,15 @@ public class ModeratorService implements IModeratorService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
             }
 
-            materialRepository.changeStatus(dbMaterial.get().getId(), Status.Published);
+            Optional<MaterialRequest> materialRequest = materialRequestRepository.findById(id);
+
+            if (materialRequest.isPresent()) {
+                answerMessageService.sendAnswerMessage(new ModeratorAnswer(materialRequest.get(), "", RequestStatus.Approved));
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Material request not found");
+            }
+
+            materialRepository.changeStatus(materialRequest.get().getMaterial().getId(), Status.Published);
             materialRequestRepository.changeRequestStatus(id, RequestStatus.Approved);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Material not found");
@@ -154,9 +162,16 @@ public class ModeratorService implements IModeratorService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material request");
             }
 
+            Optional<MaterialRequest> materialRequest = materialRequestRepository.findById(moderatorRejectRequest.getId());
+
+            if (materialRequest.isPresent()) {
+                answerMessageService.sendAnswerMessage(
+                        new ModeratorAnswer(materialRequest.get(), moderatorRejectRequest.getReason(), RequestStatus.Rejected));
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Material request not found");
+            }
+
             materialRequestRepository.changeRequestStatus(moderatorRejectRequest.getId(), RequestStatus.Rejected);
-            answerMessageService.sendAnswerMessage(
-                    new ModeratorAnswer(moderatorRejectRequest.getId(), moderatorRejectRequest.getReason(), RequestStatus.Rejected));
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Material not found");
         }

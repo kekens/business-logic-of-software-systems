@@ -1,5 +1,6 @@
 package com.ifelseelif.responseservice.models.dto;
 
+import com.ifelseelif.responseservice.models.domain.MaterialRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,15 +10,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ModeratorAnswer {
 
-    private Long id;
+    private MaterialRequest materialRequest;
     private String reason;
     private RequestStatus requestStatus;
 
     @Override
     public String toString() {
         return "ModeratorAnswer{" +
-                "id=" + id +
+                "materialRequest=" + materialRequest +
                 ", reason='" + reason + '\'' +
+                ", requestStatus=" + requestStatus +
                 '}';
     }
 }
