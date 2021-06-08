@@ -3,6 +3,10 @@
     {
       "name": "kafka.server",
       "type": "java.lang.String"
+    },
+    {
+      "name": "kafka.group.id",
+      "type": "java.lang.String"
     }
   ]
 }
