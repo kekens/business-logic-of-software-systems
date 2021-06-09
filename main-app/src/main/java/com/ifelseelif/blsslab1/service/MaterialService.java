@@ -47,7 +47,6 @@ public class MaterialService implements IMaterialService {
         CustomUserDetails principal = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         if (principal.getAuthorities().toString().contains("MODERATOR")) {
-            System.out.println("YA TUT");
             return (List<Material>) materialRepository.findAll();
         } else {
             return materialRepository.findAllByUser(userRepository.findByUsername(principal.getUsername()));
