@@ -15,6 +15,7 @@ import java.util.Date;
 public class JwtProvider {
     @Value("$(jwt.secret)")
     private String jwtSecret;
+    private static int dayOfExpire = 15;
 
     public boolean validateToken(String token) {
         try {
@@ -31,7 +32,7 @@ public class JwtProvider {
     }
 
     public String generateToken(String login) {
-        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(LocalDate.now().plusDays(dayOfExpire).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(login)
                 .setExpiration(date)
