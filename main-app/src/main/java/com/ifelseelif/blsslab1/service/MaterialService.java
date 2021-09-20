@@ -172,13 +172,7 @@ public class MaterialService implements IMaterialService {
 
         Material material = materialRepository.findMaterialByBlog(blog);
 
-        if (!material.getUser().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect blog ID");
-        }
-
-        if (!material.getStatus().equals(Status.Draft)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been sent");
-        }
+        ValidateMaterialStatus(material, user);
 
         Country country = countryRepository.findById(blogDto.getCountryId()).orElseThrow(() ->
                 new ResponseStatusException(
@@ -205,13 +199,7 @@ public class MaterialService implements IMaterialService {
 
         Material material = materialRepository.findMaterialByReview(review);
 
-        if (!material.getUser().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect review ID");
-        }
-
-        if (!material.getStatus().equals(Status.Draft)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been sent");
-        }
+        ValidateMaterialStatus(material, user);
 
         Hotel hotel = hotelRepository.findById(reviewDto.getHotelId()).orElseThrow(() ->
                 new ResponseStatusException(
@@ -247,13 +235,7 @@ public class MaterialService implements IMaterialService {
 
         Material material = materialRepository.findMaterialByStory(story);
 
-        if (!material.getUser().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect story ID");
-        }
-
-        if (!material.getStatus().equals(Status.Draft)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Review has been sent");
-        }
+        ValidateMaterialStatus(material, user);
 
         Iterable<Country> dbCountries = countryRepository.findAllById(storyDto.getCountries());
 
@@ -286,13 +268,7 @@ public class MaterialService implements IMaterialService {
 
         if (material.isPresent()) {
 
-            if (!material.get().getUser().equals(user)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect material ID");
-            }
-
-            if (!material.get().getStatus().equals(Status.Draft)) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
-            }
+            ValidateMaterialStatus(material.get(), user);
 
             TypeMaterial typeMaterial = material.get().getTypeMaterial();
 
@@ -321,5 +297,15 @@ public class MaterialService implements IMaterialService {
     @Override
     public List<Material> getAllBestMaterials() {
         return null;
+    }
+
+    private void ValidateMaterialStatus(Material material, User user) {
+        if (!material.getUser().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect material ID");
+        }
+
+        if (!material.getStatus().equals(Status.Draft)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect status of material");
+        }
     }
 }
