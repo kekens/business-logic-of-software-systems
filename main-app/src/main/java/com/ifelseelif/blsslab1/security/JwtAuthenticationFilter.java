@@ -19,7 +19,7 @@ import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.substringMatch;
 
 @Component
-public class JwtAuthenticationFilter extends GenericFilterBean  {
+public class JwtAuthenticationFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean  {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
-        if (!IsEmptyOrNull(token) && jwtProvider.validateToken(token)) {
+        if (validateToken(token)) {
             String userLogin = jwtProvider.getLoginFromToken(token);
             System.out.println("token " + token);
             CustomUserDetails customUserDetails = userDetailsService.loadUserByUsername(userLogin);
@@ -41,19 +41,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean  {
             servletRequest.setAttribute("username", jwtProvider.getLoginFromToken(token));
         }
         filterChain.doFilter(servletRequest, servletResponse);
+    }
 
+    private boolean validateToken(String token) {
+        if (token == null) {
+            return false;
+        }
+
+        if (token.isEmpty()) {
+            return false;
+        }
+
+        return jwtProvider.validateToken(token);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
         return request.getHeader(AUTHORIZATION);
     }
 
-    private boolean IsEmptyOrNull(String string){
-        if(string == null){
-            return true;
-        }
-
-        return string.isEmpty();
-    }
 
 }

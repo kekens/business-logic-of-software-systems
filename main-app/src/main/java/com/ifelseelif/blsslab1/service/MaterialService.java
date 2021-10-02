@@ -74,11 +74,15 @@ public class MaterialService implements IMaterialService {
 
         Optional<Material> material = materialRepository.findById(id);
 
-        if (material.isPresent() && !material.get().getUser().equals(user)) {
+        if (validateMaterial(material, user)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect material ID");
         }
 
         materialRepository.deleteById(id);
+    }
+
+    private boolean validateMaterial(Optional<Material> material, User user) {
+        return material.isPresent() && !material.get().getUser().equals(user);
     }
 
     @Override
