@@ -124,15 +124,7 @@ public class MaterialService implements IMaterialService {
     @Override
     public void createReview(ReviewDto reviewDto) {
         Review review = new Review();
-        review.setScoreOfLocation(reviewDto.getScoreOfLocation());
-        review.setScoreOfService(reviewDto.getScoreOfService());
-        review.setScoreOfStuff(reviewDto.getScoreOfStuff());
-        review.setScoreOfFood(reviewDto.getScoreOfFood());
-        review.setGoodHotel(reviewDto.getIsGoodHotel());
-        review.setVisitedDate(reviewDto.getVisitedDate());
-        review.setAdvantages(reviewDto.getAdvantages());
-        review.setDisadvantages(reviewDto.getDisadvantages());
-        review.setMainText(reviewDto.getMainText());
+        fillReview(review, reviewDto);
         review.setHotel(new Hotel(reviewDto.getHotelId()));
 
         reviewRepository.save(review);
@@ -144,11 +136,7 @@ public class MaterialService implements IMaterialService {
     @Override
     public void createStory(StoryDto storyDto) {
         Story story = new Story();
-        story.setHeader(storyDto.getHeader());
-        story.setTravelDate(storyDto.getTravelDate());
-        story.setBriefInformation(storyDto.getBriefInformation());
-        story.setMainText(storyDto.getMainText());
-        story.setVerified(false);
+        fillStory(story, storyDto);
 
         Set<Country> countrySet = new HashSet<>();
         for (long countryId : storyDto.getCountries()) {
@@ -158,6 +146,14 @@ public class MaterialService implements IMaterialService {
         story.setCountry(countrySet);
         storyRepository.save(story);
         this.createMaterial(TypeMaterial.Story);
+    }
+
+    private void fillStory(Story story, StoryDto storyDto) {
+        story.setHeader(storyDto.getHeader());
+        story.setTravelDate(storyDto.getTravelDate());
+        story.setBriefInformation(storyDto.getBriefInformation());
+        story.setMainText(storyDto.getMainText());
+        story.setVerified(false);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -206,21 +202,25 @@ public class MaterialService implements IMaterialService {
                         HttpStatus.NOT_FOUND, ("Hotel with id=" + reviewDto.getHotelId() + " not found")
                 ));
 
+        fillReview(review, reviewDto);
+        review.setHotel(hotel);
+
+        reviewRepository.save(review);
+        materialRequestRepository.changeRequestStatus(material.getId(), RequestStatus.Unchecked);
+    }
+
+    private void fillReview(Review review, ReviewDto reviewDto) {
         review.setAdvantages(reviewDto.getAdvantages());
         review.setDisadvantages(reviewDto.getDisadvantages());
 
         review.setVisitedDate(reviewDto.getVisitedDate());
         review.setGoodHotel(reviewDto.getIsGoodHotel());
         review.setMainText(reviewDto.getMainText());
-        review.setHotel(hotel);
 
         review.setScoreOfService(reviewDto.getScoreOfService());
         review.setScoreOfFood(reviewDto.getScoreOfFood());
         review.setScoreOfStuff(reviewDto.getScoreOfStuff());
         review.setScoreOfLocation(reviewDto.getScoreOfLocation());
-
-        reviewRepository.save(review);
-        materialRequestRepository.changeRequestStatus(material.getId(), RequestStatus.Unchecked);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -247,12 +247,7 @@ public class MaterialService implements IMaterialService {
                     HttpStatus.NOT_FOUND, ("Some country not found")
             );
         }
-
-        story.setBriefInformation(storyDto.getBriefInformation());
-        story.setMainText(storyDto.getMainText());
-        story.setTravelDate(storyDto.getTravelDate());
-        story.setHeader(storyDto.getHeader());
-        story.setCountry(countries);
+        fillStory(story, storyDto);
 
         storyRepository.save(story);
     }
