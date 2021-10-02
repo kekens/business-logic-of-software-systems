@@ -1,5 +1,6 @@
 package com.ifelseelif.blsslab1.service.interfaces;
 
+import com.ifelseelif.blsslab1.models.domain.publications.PublicationStrategy;
 import com.ifelseelif.blsslab1.models.dto.*;
 import com.ifelseelif.blsslab1.models.domain.Material;
 
@@ -13,7 +14,7 @@ public interface IMaterialService {
 
     void deleteMaterial(long id);
 
-    void createMaterial(TypeMaterial typeMaterial);
+    void createMaterial(PublicationStrategy typeMaterial);
 
     void createBlog(BlogDto blogDto);
 

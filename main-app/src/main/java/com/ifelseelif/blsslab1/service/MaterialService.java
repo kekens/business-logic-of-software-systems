@@ -1,6 +1,10 @@
 package com.ifelseelif.blsslab1.service;
 
 import com.ifelseelif.blsslab1.database.*;
+import com.ifelseelif.blsslab1.models.domain.publications.BlogPublicationStrategy;
+import com.ifelseelif.blsslab1.models.domain.publications.PublicationStrategy;
+import com.ifelseelif.blsslab1.models.domain.publications.ReviewPublicationStrategy;
+import com.ifelseelif.blsslab1.models.domain.publications.StoryPublicationStrategy;
 import com.ifelseelif.blsslab1.models.dto.*;
 import com.ifelseelif.blsslab1.models.domain.*;
 import com.ifelseelif.blsslab1.security.CustomUserDetails;
@@ -86,21 +90,11 @@ public class MaterialService implements IMaterialService {
     }
 
     @Override
-    public void createMaterial(TypeMaterial typeMaterial) {
+    public void createMaterial(PublicationStrategy strategy) {
         Material material = new Material();
-        material.setTypeMaterial(typeMaterial);
+        material.setTypeMaterial(strategy.getTypeMaterial());
         material.setStatus(Status.Draft);
-        switch (typeMaterial) {
-            case Blog:
-                material.setBlog(new Blog(blogRepository.findLastBlog()));
-                break;
-            case Story:
-                material.setStory(new Story(storyRepository.findLastStory()));
-                break;
-            case Review:
-                material.setReview(new Review(reviewRepository.findLastReview()));
-                break;
-        }
+        strategy.setPublicationInMaterial(material);
 
         String username = ((CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
@@ -121,7 +115,8 @@ public class MaterialService implements IMaterialService {
 
         blogRepository.save(blog);
 
-        this.createMaterial(TypeMaterial.Blog);
+        PublicationStrategy publicationStrategy = new BlogPublicationStrategy();
+        this.createMaterial(publicationStrategy);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -133,7 +128,8 @@ public class MaterialService implements IMaterialService {
 
         reviewRepository.save(review);
 
-        this.createMaterial(TypeMaterial.Review);
+        PublicationStrategy publicationStrategy = new ReviewPublicationStrategy();
+        this.createMaterial(publicationStrategy);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -149,7 +145,8 @@ public class MaterialService implements IMaterialService {
 
         story.setCountry(countrySet);
         storyRepository.save(story);
-        this.createMaterial(TypeMaterial.Story);
+        PublicationStrategy strategy = new StoryPublicationStrategy();
+        this.createMaterial(strategy);
     }
 
     private void fillStory(Story story, StoryDto storyDto) {
